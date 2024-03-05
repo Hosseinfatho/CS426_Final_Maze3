@@ -7,7 +7,7 @@ public class Controller : MonoBehaviour
     [SerializeField]
     private GameObject playerContainer;
     [SerializeField]
-    private GameObject level;
+    private GameObject mainCamera;
     [SerializeField]
     private float playerSpeed; //default 2.0f ?
     [SerializeField]
@@ -32,6 +32,7 @@ public class Controller : MonoBehaviour
         playerContainer.transform.position = new Vector3(0, 6, 0);
         playerContainer.transform.Rotate(0, 0, 90);
         controller.enabled = true;
+
     }
 
     private void Start()
@@ -121,13 +122,20 @@ public class Controller : MonoBehaviour
             }
 
             Vector3 mouseOffset = Input.mousePosition - mouseReference;
-            //level.transform.Rotate(mouseOffset * mouseSensitivity);
+            mainCamera.transform.Rotate(mouseOffset * mouseSensitivity);
+            mainCamera.transform.LookAt(Vector3.zero);
             //level.transform.rotation = Quaternion.Euler(level.transform.rotation.eulerAngles.x + mouseOffset.x, level.transform.rotation.eulerAngles.y + mouseOffset.y, 0);
             mouseReference = Input.mousePosition;
         }
         else
         {
             mouseDown = false;
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            mainCamera.transform.position = groundVector * -30;
+            mainCamera.transform.LookAt(Vector3.zero);
         }
 
 
@@ -156,7 +164,7 @@ public class Controller : MonoBehaviour
         debugTextField.text += "Backward: " + checkGround(Vector3.back) + "\n";
         debugTextField.text += "Move vector: " + move.x.ToString() + ", " + move.y.ToString() + ", " + move.z.ToString() + "\n";
         debugTextField.text += "Ground vector: " + groundVector.x.ToString() + ", " + groundVector.y.ToString() + ", " + groundVector.z.ToString() + "\n";
-        debugTextField.text += "Rotation vector: " + level.transform.rotation.x.ToString() + ", " + level.transform.rotation.y.ToString() + ", " + level.transform.rotation.z.ToString() + "\n";
+        debugTextField.text += "Camera vector: " + mainCamera.transform.rotation.x.ToString() + ", " + mainCamera.transform.rotation.y.ToString() + ", " + mainCamera.transform.rotation.z.ToString() + "\n";
         debugTextField.text += "Mouse ref vector: " + mouseReference.x.ToString() + ", " + mouseReference.y.ToString() + ", " + mouseReference.z.ToString() + "\n";
 
         // This specifies which way the character is pointing
