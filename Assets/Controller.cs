@@ -12,7 +12,7 @@ public class Controller : MonoBehaviour
     [SerializeField]
     private float playerSpeed; //default 2.0f ?
     [SerializeField]
-    private float playerVerticalSpeed;
+    private float playerGravity;
     [SerializeField]
     private float mouseSensitivity;
     [SerializeField]
@@ -26,7 +26,6 @@ public class Controller : MonoBehaviour
     private CharacterController controller;
     private float playerVelocity;
 
-    private bool mouseDown;
     private Vector3 mouseReference;
 
     private void resetPos()
@@ -77,13 +76,6 @@ public class Controller : MonoBehaviour
         return groundVector;
     }
 
-    private Vector3 getMovementCameraVector()
-    {
-        float camX = mainCamera.transform.rotation.x;
-
-        return Vector3.zero;
-    }
-
     /*
         This hopefully translates the x, y, z standard input into actual coordinates relatively to the center of the world (at 0,0,0)
         I really don't know how to describe this function better.
@@ -117,9 +109,15 @@ public class Controller : MonoBehaviour
             movement = new Vector3(x, -z, y);
         }
 
-        //get camera rotation to figure out which way is "up" on the screen
+        // stupid code mode ON:
+        float rotX = mainCamera.transform.eulerAngles.x;
+        float rotY = mainCamera.transform.eulerAngles.y;
+        float rotZ = mainCamera.transform.eulerAngles.z;
 
-        return movement;
+
+
+        //get camera rotation to figure out which way is "up" on the screen
+        return Quaternion.Euler(0, 0, 0) * movement;
     }
 
     void Update()
@@ -148,7 +146,7 @@ public class Controller : MonoBehaviour
         }
         else
         {
-            playerVelocity += playerVerticalSpeed * Time.deltaTime;
+            playerVelocity += playerGravity * Time.deltaTime;
         }
 
         // This updates the left/right up/down movement
