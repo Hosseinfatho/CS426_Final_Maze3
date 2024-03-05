@@ -1,47 +1,55 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMovement : MonoBehaviour
+public class Controller : MonoBehaviour
 {
     [SerializeField]
-    private GameObject player;
+    private GameObject playerContainer;
     [SerializeField]
     private GameObject level;
+    [SerializeField]
+    private float playerSpeed; //default 2.0f ?
+    [SerializeField]
+    private float playerVerticalSpeed;
+    [SerializeField]
+    private float mouseSensitivity;
+
     [SerializeField]
     private TMP_Text debugTextField;
     [SerializeField]
     private Button resetButton;
-    [SerializeField]
-    private float playerSpeed; //default 2.0f ?
 
     private CharacterController controller;
-    private Vector3 playerVelocity;
+    private float playerVelocity;
+
+    private bool mouseDown;
+    private Vector3 mouseReference;
 
     private void resetPos()
     {
         controller.enabled = false;
-        gameObject.transform.position = new Vector3(0, 6, 0);
-        gameObject.transform.Rotate(0, 0, 90);
+        playerContainer.transform.position = new Vector3(0, 6, 0);
+        playerContainer.transform.Rotate(0, 0, 90);
         controller.enabled = true;
     }
 
     private void Start()
     {
-        controller = gameObject.AddComponent<CharacterController>();
+        controller = playerContainer.AddComponent<CharacterController>();
+        controller.radius = 0.5f;
+        controller.height = 1;
         resetButton.onClick.AddListener(resetPos);
     }
-
 
     /*
         This makes a line from player position (transform.position), with direction of the vector (vector), length of that line, layerMask
         Returns true if this new line intersects with layerMask
         So to detect the "ground", cube must be made of layer called "Ground"
     */
-    private bool checkGround(Vector3 vector)
+    private bool checkGround(Vector3 vector, float distance = 5.0f)
     {
-        return Physics.Raycast(transform.position, vector, 2f, 1 << LayerMask.NameToLayer("Ground"));
+        return Physics.Raycast(playerContainer.transform.position, vector, distance, 1 << LayerMask.NameToLayer("Ground"));
     }
 
     /*
@@ -103,17 +111,39 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetMouseButton(0))
+        {
+            //at first click, save the position
+            if (!mouseDown)
+            {
+                mouseReference = Input.mousePosition;
+                mouseDown = true;
+            }
+
+            Vector3 mouseOffset = Input.mousePosition - mouseReference;
+            //level.transform.Rotate(mouseOffset * mouseSensitivity);
+            //level.transform.rotation = Quaternion.Euler(level.transform.rotation.eulerAngles.x + mouseOffset.x, level.transform.rotation.eulerAngles.y + mouseOffset.y, 0);
+            mouseReference = Input.mousePosition;
+        }
+        else
+        {
+            mouseDown = false;
+        }
+
 
 
         getGroundVector();
-
-        if (controller.isGrounded)
+        if (checkGround(groundVector, 0.5f))
         {
-            playerVelocity = translateMovement(0, 0, 0);
+            playerVelocity = 0;
+        }
+        else
+        {
+            playerVelocity += playerVerticalSpeed * Time.deltaTime;
         }
 
         // This updates the left/right up/down movement
-        Vector3 move = translateMovement(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 move = translateMovement(Input.GetAxis("Horizontal"), playerVelocity, Input.GetAxis("Vertical"));
         controller.Move(move * Time.deltaTime * playerSpeed);
 
         // Some debug garbage
@@ -126,16 +156,13 @@ public class PlayerMovement : MonoBehaviour
         debugTextField.text += "Backward: " + checkGround(Vector3.back) + "\n";
         debugTextField.text += "Move vector: " + move.x.ToString() + ", " + move.y.ToString() + ", " + move.z.ToString() + "\n";
         debugTextField.text += "Ground vector: " + groundVector.x.ToString() + ", " + groundVector.y.ToString() + ", " + groundVector.z.ToString() + "\n";
+        debugTextField.text += "Rotation vector: " + level.transform.rotation.x.ToString() + ", " + level.transform.rotation.y.ToString() + ", " + level.transform.rotation.z.ToString() + "\n";
+        debugTextField.text += "Mouse ref vector: " + mouseReference.x.ToString() + ", " + mouseReference.y.ToString() + ", " + mouseReference.z.ToString() + "\n";
 
         // This specifies which way the character is pointing
         if (move != Vector3.zero)
         {
             //gameObject.transform.forward = move;
         }
-
-        // This updates the vertical movement (player in the game shouldn't actually move vertically unless it comes over the edge)
-        // It is done separately from above to not influence the character rotation when it's moving vertically.
-        playerVelocity += translateMovement(0, -1f * Time.deltaTime, 0);
-        controller.Move(playerVelocity * Time.deltaTime);
     }
 }
