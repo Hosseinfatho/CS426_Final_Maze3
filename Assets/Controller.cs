@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ public class Controller : MonoBehaviour
     private float playerVerticalSpeed;
     [SerializeField]
     private float mouseSensitivity;
+    [SerializeField]
+    private float cameraSnapBackSpeed;
 
     [SerializeField]
     private TMP_Text debugTextField;
@@ -74,6 +77,13 @@ public class Controller : MonoBehaviour
         return groundVector;
     }
 
+    private Vector3 getMovementCameraVector()
+    {
+        float camX = mainCamera.transform.rotation.x;
+
+        return Vector3.zero;
+    }
+
     /*
         This hopefully translates the x, y, z standard input into actual coordinates relatively to the center of the world (at 0,0,0)
         I really don't know how to describe this function better.
@@ -107,29 +117,22 @@ public class Controller : MonoBehaviour
             movement = new Vector3(x, -z, y);
         }
 
+        //get camera rotation to figure out which way is "up" on the screen
+
         return movement;
     }
 
     void Update()
     {
+        // Camera rotation
         if (Input.GetMouseButton(0))
         {
-            //at first click, save the position
-            if (!mouseDown)
-            {
-                mouseReference = Input.mousePosition;
-                mouseDown = true;
-            }
-
-            Vector3 mouseOffset = Input.mousePosition - mouseReference;
-            mainCamera.transform.Rotate(mouseOffset * mouseSensitivity);
-            mainCamera.transform.LookAt(Vector3.zero);
-            //level.transform.rotation = Quaternion.Euler(level.transform.rotation.eulerAngles.x + mouseOffset.x, level.transform.rotation.eulerAngles.y + mouseOffset.y, 0);
-            mouseReference = Input.mousePosition;
+            mainCamera.transform.RotateAround(Vector3.zero, mainCamera.transform.up, Input.GetAxis("Mouse X") * mouseSensitivity);
+            mainCamera.transform.RotateAround(Vector3.zero, mainCamera.transform.right, -Input.GetAxis("Mouse Y") * mouseSensitivity);
         }
         else
         {
-            mouseDown = false;
+
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -137,8 +140,6 @@ public class Controller : MonoBehaviour
             mainCamera.transform.position = groundVector * -30;
             mainCamera.transform.LookAt(Vector3.zero);
         }
-
-
 
         getGroundVector();
         if (checkGround(groundVector, 0.5f))
@@ -164,7 +165,7 @@ public class Controller : MonoBehaviour
         debugTextField.text += "Backward: " + checkGround(Vector3.back) + "\n";
         debugTextField.text += "Move vector: " + move.x.ToString() + ", " + move.y.ToString() + ", " + move.z.ToString() + "\n";
         debugTextField.text += "Ground vector: " + groundVector.x.ToString() + ", " + groundVector.y.ToString() + ", " + groundVector.z.ToString() + "\n";
-        debugTextField.text += "Camera vector: " + mainCamera.transform.rotation.x.ToString() + ", " + mainCamera.transform.rotation.y.ToString() + ", " + mainCamera.transform.rotation.z.ToString() + "\n";
+        debugTextField.text += "Camera vector: " + mainCamera.transform.rotation.eulerAngles.x.ToString() + ", " + mainCamera.transform.rotation.eulerAngles.y.ToString() + ", " + mainCamera.transform.rotation.eulerAngles.z.ToString() + "\n";
         debugTextField.text += "Mouse ref vector: " + mouseReference.x.ToString() + ", " + mouseReference.y.ToString() + ", " + mouseReference.z.ToString() + "\n";
 
         // This specifies which way the character is pointing
