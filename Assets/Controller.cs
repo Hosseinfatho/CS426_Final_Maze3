@@ -76,13 +76,67 @@ public class Controller : MonoBehaviour
         return groundVector;
     }
 
+    public static Vector2 rotate(Vector2 v, float delta)
+    {
+        return new Vector2(
+            v.x * Mathf.Cos(delta) - v.y * Mathf.Sin(delta),
+            v.x * Mathf.Sin(delta) + v.y * Mathf.Cos(delta)
+        );
+    }
+
+    /*
+        Rotates a given vector by 'rot' times, each 'rot' rotates it right 90*.
+        Support only 0-3. Stupid but really cheap function.
+    */
+    private void rotate90(ref float x, ref float y, int rot)
+    {
+        // right 90*
+        if (rot == 0)
+        {
+            return;
+        }
+        else if (rot == 1)
+        {
+            float tmp = x;
+            x = -y;
+            y = tmp;
+        }
+        else if (rot == 2)
+        {
+            x = -x;
+            y = -y;
+        }
+        else if (rot == 3)
+        {
+            float tmp = x;
+            x = -y;
+            y = x;
+        }
+    }
+
+    // Get how many times we need to "rotate" the input depending on the
+    // camera angle
+    private int rotateAmt()
+    {
+        int rotateAmt = 0;
+        for (int i = (int)mainCamera.transform.eulerAngles.z; i >= 45; i -= 90)
+        {
+            rotateAmt++;
+        }
+        return rotateAmt % 4;
+    }
+
+
     /*
         This hopefully translates the x, y, z standard input into actual coordinates relatively to the center of the world (at 0,0,0)
         I really don't know how to describe this function better.
     */
     private Vector3 translateMovement(float x, float y, float z)
     {
-        Vector3 movement = new Vector3(0, 0, 0);
+        Vector3 movement;
+
+
+
 
         if (Equals(groundVector, Vector3.down))
         {
@@ -90,34 +144,27 @@ public class Controller : MonoBehaviour
         }
         else if (Equals(groundVector, Vector3.up))
         {
-            movement = new Vector3(x, -y, z);
+            movement = new Vector3(x, -y, -z);
         }
         else if (Equals(groundVector, Vector3.right))
         {
-            movement = new Vector3(-y, x, z);
+            movement = new Vector3(-y, z, -x);
         }
         else if (Equals(groundVector, Vector3.left))
         {
-            movement = new Vector3(y, x, z);
+            movement = new Vector3(y, z, x);
         }
         else if (Equals(groundVector, Vector3.forward))
         {
             movement = new Vector3(x, z, -y);
         }
-        else if (Equals(groundVector, Vector3.back))
+        else// if (Equals(groundVector, Vector3.back))
         {
-            movement = new Vector3(x, -z, y);
+            movement = new Vector3(-x, z, y);
         }
 
-        // stupid code mode ON:
-        float rotX = mainCamera.transform.eulerAngles.x;
-        float rotY = mainCamera.transform.eulerAngles.y;
-        float rotZ = mainCamera.transform.eulerAngles.z;
-
-
-
         //get camera rotation to figure out which way is "up" on the screen
-        return Quaternion.Euler(0, 0, 0) * movement;
+        return movement;
     }
 
     void Update()
@@ -165,6 +212,7 @@ public class Controller : MonoBehaviour
         debugTextField.text += "Ground vector: " + groundVector.x.ToString() + ", " + groundVector.y.ToString() + ", " + groundVector.z.ToString() + "\n";
         debugTextField.text += "Camera vector: " + mainCamera.transform.rotation.eulerAngles.x.ToString() + ", " + mainCamera.transform.rotation.eulerAngles.y.ToString() + ", " + mainCamera.transform.rotation.eulerAngles.z.ToString() + "\n";
         debugTextField.text += "Mouse ref vector: " + mouseReference.x.ToString() + ", " + mouseReference.y.ToString() + ", " + mouseReference.z.ToString() + "\n";
+        debugTextField.text += "Rotate input: " + rotateAmt().ToString() + "\n";
 
         // This specifies which way the character is pointing
         if (move != Vector3.zero)
