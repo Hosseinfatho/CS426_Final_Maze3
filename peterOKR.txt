@@ -1,0 +1,9 @@
+Schedule and deliverable:
+    - Fri 03/08 - by end of the day - 5h?:
+        basic test scene with player character movement
+        (have character "stick" to the cube's surface and
+        move over the edges, or in other words have gravity
+        always pointing to the face of the cube currently occupied by the player)
+    - Sun 03/10 - by end of the day - 3h?:
+        make player controls relative to the camera position
+        (so pressing 'w' always moves the player towards the top of the screen)
