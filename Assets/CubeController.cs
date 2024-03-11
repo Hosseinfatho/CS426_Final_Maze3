@@ -14,9 +14,9 @@ public class CubeController : MonoBehaviour
     {
         HorizontalInput=Input.GetAxis("Horizontal");
         VerticalInput=Input.GetAxis("Vertical");
-    transform.Rotate(Vector3.up*Time.deltaTime*speed*HorizontalInput);
+    transform.Rotate(Vector3.down*Time.deltaTime*speed*HorizontalInput);
     
-    transform.Rotate(Vector3.right*Time.deltaTime*speed*VerticalInput);
+    transform.Rotate(Vector3.left*Time.deltaTime*speed*VerticalInput);
         if (Input.GetKeyDown(KeyCode.X))
         {
             // Rotate the Cube around its X axis
