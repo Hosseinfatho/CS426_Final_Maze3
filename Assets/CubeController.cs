@@ -6,9 +6,17 @@ using UnityEngine;
 public class CubeController : MonoBehaviour
 {
     public GameObject ball; // Assign the Ball GameObject in the inspector
-
+ public float speed=10;
+ public float turnspeed=5;
+ public float HorizontalInput;
+ public float VerticalInput;
     void Update()
     {
+        HorizontalInput=Input.GetAxis("Horizontal");
+        VerticalInput=Input.GetAxis("Vertical");
+    transform.Rotate(Vector3.up*Time.deltaTime*speed*HorizontalInput);
+    
+    transform.Rotate(Vector3.right*Time.deltaTime*speed*VerticalInput);
         if (Input.GetKeyDown(KeyCode.X))
         {
             // Rotate the Cube around its X axis
