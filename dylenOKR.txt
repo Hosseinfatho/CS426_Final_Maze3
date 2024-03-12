@@ -1,0 +1,7 @@
+Schedule and deliverables:
+    - Tuesday 03/12 - by end of day - 2h
+        simple tutorial / early level protoype; basic boundaries, intended
+        to get player comfortable with controls -- allow for minimal SW prototype
+    - Wednesday 03/13 - by end of day - 3h
+        brainstorm strategies for modular level design (i.e. templated system)
+        draft an example template
