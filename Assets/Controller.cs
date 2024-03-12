@@ -12,13 +12,13 @@ public class Controller : MonoBehaviour
     [SerializeField]
     private GameObject mainCamera;
     [SerializeField]
-    private float playerSpeed; //default 2.0f ?
+    private float playerSpeed;
     [SerializeField]
     private float playerGravity;
     [SerializeField]
     private float mouseSensitivity;
 
-
+    // To be removed later:
     [SerializeField]
     private TMP_Text debugTextField;
     [SerializeField]
@@ -64,32 +64,13 @@ public class Controller : MonoBehaviour
     }
 
     /*
-        This returns the vector that points to the ground.
-        If no vector points to the ground, it returns the last state.
-        0, -1, 0 - is a "normal" state
-    */
-    private Vector3[] directions = { Vector3.down, Vector3.up, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
-    private Vector3 getGroundVector()
-    {
-        foreach (Vector3 vector in directions)
-        {
-            if (checkGround(vector))
-            {
-                return vector;
-            }
-        }
-
-
-        return Vector3.down;
-    }
-
-    /*
         If ground not detected, then player possibly went over the edge,
         so we need to rotate the player so we know where the "new" ground is.
 
         Assumes that at any point it doesn't require to rotate more than 90* in any direction.
+        Rotates only in one axis at the time.
 
-        [This function is not very smart]
+        [If you didn't notice, this function is not very smart]
     */
     private Vector3[] rotationVectors = { new Vector3(90, 0, 0), new Vector3(-90, 0, 0), new Vector3(0, 90, 0), new Vector3(0, -90, 0), new Vector3(0, 0, 90), new Vector3(0, 0, -90) };
     private void fixPlayerRotation()
@@ -112,7 +93,7 @@ public class Controller : MonoBehaviour
         // Vector that points to the ground
         Vector3 groundVector = playerContainer.transform.rotation * Vector3.down;
 
-        // Camera rotation
+        // On mouse left click / hold, rotate the camera around the cube
         if (Input.GetMouseButton(0))
         {
             mainCamera.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
@@ -122,13 +103,17 @@ public class Controller : MonoBehaviour
 
         }
 
+        // On mouse right click, center the camera on the player
         if (Input.GetMouseButtonDown(1))
         {
             mainCamera.transform.position = groundVector * -1;
             mainCamera.transform.LookAt(Vector3.zero);
         }
 
-
+        /*
+            Allow for player input only when character is "touching" the ground.
+            This also sets how far above the ground character is hovering.
+        */
         if (checkGround(groundVector, 0.5f))
         {
             movementVector.x = Input.GetAxis("Horizontal");
@@ -141,6 +126,7 @@ public class Controller : MonoBehaviour
             if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, playerContainer.transform.position) > 1)
                 fixPlayerRotation();
 
+            // this moves the player down towards the face - gravity
             movementVector.y += playerGravity * Time.deltaTime;
         }
 
@@ -155,25 +141,12 @@ public class Controller : MonoBehaviour
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        if (horizontal > 0)
-        {
-            debugTextField.text += "Pressing D\n";
-        }
-        else if (horizontal < 0)
-        {
-            debugTextField.text += "Pressing A\n";
-        }
-        if (vertical > 0)
-        {
-            debugTextField.text += "Pressing W\n";
-        }
-        else if (vertical < 0)
-        {
-            debugTextField.text += "Pressing S\n";
-        }
+        if (horizontal > 0) debugTextField.text += "Pressing D\n";
+        else if (horizontal < 0) debugTextField.text += "Pressing A\n";
+        if (vertical > 0) debugTextField.text += "Pressing W\n";
+        else if (vertical < 0) debugTextField.text += "Pressing S\n";
 
-
-        // This specifies which way the character is pointing
+        // Use this to rotate the character model towards the velocity vector
         if (movementVector != Vector3.zero)
         {
             playerCharacter.transform.forward = playerContainer.transform.rotation * movementVector;
