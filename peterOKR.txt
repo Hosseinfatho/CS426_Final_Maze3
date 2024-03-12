@@ -1,0 +1,16 @@
+Schedule and deliverable:
+    - Fri 03/08 - by end of the day - 5h?:
+        basic test scene with player character movement
+        (have character "stick" to the cube's surface and
+        move over the edges, or in other words have gravity
+        always pointing to the face of the cube currently occupied by the player)
+    - Mon 03/11 - by end of the day - 3h?:
+        make player controls work properly when changing faces
+        (so character moved predictably, and no movement axis is inverted)
+
+    - ??? - ??h:
+        figure out the movement dependent on the camera position
+        (so pressing W always moves the player towards the top of the screen)
+    - ??? - ??h:
+        make camera follow the player and snap back to some position
+        (so player doesn't need to manually rotate the cube if went over the edge)
