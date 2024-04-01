@@ -6,19 +6,19 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField]
-    private Transform[] waypoints;
-    [SerializeField]
-    private float viewDistance;
+    [SerializeField] private Animator enemyAnimator;
+    [SerializeField] private Transform[] waypoints;
+    [SerializeField] private float viewDistance;
 
-    [SerializeField]
-    private GameObject player;
+    [SerializeField] private GameObject player;
 
     NavMeshAgent agent;
     int waypointIndex;
     Vector3 target;
     Vector3 lastPlayerPosition;
     bool wasPlayerSeen;
+    float lastPlayerSeenTime;
+    bool movementEnabled;
 
     void Start()
     {
@@ -26,40 +26,61 @@ public class EnemyAI : MonoBehaviour
         waypointIndex = 0;
         lastPlayerPosition = Vector3.zero;
         wasPlayerSeen = false;
+        movementEnabled = true;
 
         UpdateDestination();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (playerInSight())
+        if (movementEnabled)
         {
-            agent.SetDestination(lastPlayerPosition);
-            wasPlayerSeen = true;
-        }
-        else if (wasPlayerSeen)
-        {
-            if (Vector3.Distance(transform.position, lastPlayerPosition) < 0.5)
+            // If player in sight, go to the player's location
+            if (playerInSight())
             {
-                wasPlayerSeen = false;
+                enemyAnimator.SetTrigger("Walking");
+                agent.SetDestination(lastPlayerPosition);
+                wasPlayerSeen = true;
+                lastPlayerSeenTime = 0;
+            }
+            // if player no longer in sight, go to the last player's known location
+            else if (wasPlayerSeen)
+            {
+                if (Vector3.Distance(transform.position, lastPlayerPosition) < 0.5)
+                {
+                    if (lastPlayerSeenTime == 0)
+                    {
+                        lastPlayerSeenTime = Time.fixedTime;
+                        enemyAnimator.ResetTrigger("Walking");
+                    }
+                    else if (Time.fixedTime - lastPlayerSeenTime > 2.0f)
+                    {
+                        wasPlayerSeen = false;
+                    }
+                }
+            }
+            // otherwise, follow waypoints
+            else
+            {
+                enemyAnimator.SetTrigger("Walking");
+
+                if (Vector3.Distance(transform.position, target) < 1)
+                    nextWaypoint();
+
+                UpdateDestination();
             }
         }
-        else
-        {
-            if (Vector3.Distance(transform.position, target) < 1)
-                nextWaypoint();
 
-            UpdateDestination();
-        }
 
         if (Vector3.Distance(player.transform.position, this.transform.position) < 1)
         {
-            Debug.Log("Player caught!");
-            Destroy(gameObject);
+            movementEnabled = false;
+            enemyAnimator.ResetTrigger("Walking");
+            enemyAnimator.SetTrigger("Die");
         }
     }
 
+    // Returns true/false depending if player character is in line of sight of the enemy
     bool playerInSight()
     {
         RaycastHit hit;
@@ -76,6 +97,7 @@ public class EnemyAI : MonoBehaviour
         return false;
     }
 
+    // Sets destination of the agent to the waypoint
     void UpdateDestination()
     {
         target = waypoints[waypointIndex].position;
