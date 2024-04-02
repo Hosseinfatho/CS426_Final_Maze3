@@ -10,7 +10,7 @@ public class Controller : MonoBehaviour
     [SerializeField]
     private GameObject playerCharacter;
     [SerializeField]
-    private GameObject mainCamera;
+    private GameObject cameraContainer;
     [SerializeField]
     private float playerSpeed;
     [SerializeField]
@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
     private CharacterController controller; //this will be dynamically added to the PlayerContainer
     private Vector3 movementVector;
     private Vector3 lastGroundPosition; // last position when we were touching ground
+    private GameObject mainCamera;
 
 
     private void resetPos()
@@ -44,6 +45,21 @@ public class Controller : MonoBehaviour
 
     }
 
+    GameObject FindChildWithTag(GameObject parent, string tag)
+    {
+        GameObject child = null;
+        foreach (Transform transform in parent.transform)
+        {
+            if (transform.CompareTag(tag))
+            {
+                child = transform.gameObject;
+                break;
+            }
+        }
+        return child;
+    }
+
+
     private void Start()
     {
         controller = playerContainer.AddComponent<CharacterController>();
@@ -51,6 +67,7 @@ public class Controller : MonoBehaviour
         controller.height = 1;
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
+        mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
     }
 
     /*
@@ -96,7 +113,7 @@ public class Controller : MonoBehaviour
         // On mouse left click / hold, rotate the camera around the cube
         if (Input.GetMouseButton(0))
         {
-            mainCamera.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
+            cameraContainer.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
         }
         else
         {
@@ -106,8 +123,8 @@ public class Controller : MonoBehaviour
         // On mouse right click, center the camera on the player
         if (Input.GetMouseButtonDown(1))
         {
-            mainCamera.transform.position = groundVector * -1;
-            mainCamera.transform.LookAt(Vector3.zero);
+            cameraContainer.transform.position = groundVector * -1;
+            cameraContainer.transform.LookAt(Vector3.zero);
         }
 
         /*
@@ -130,14 +147,30 @@ public class Controller : MonoBehaviour
             movementVector.y += playerGravity * Time.deltaTime;
         }
 
+        /*
+            Mouse wheel for camera zooming in / out
+        */
+        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+        if (mouseWheel != 0)
+        {
+            Vector3 position = mainCamera.transform.localPosition;
+            position.z += mouseWheel * 15;
+
+            if (position.z <= -20 && position.z >= -50)
+            {
+                mainCamera.transform.localPosition = position;
+            }
+        }
+
         controller.Move(playerContainer.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
         // Some debug stuff
         debugTextField.text = "";
-        debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
-        debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
-        debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
-        debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
+        // debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
+        // debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
+        // debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
+        // debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
+        // debugTextField.text += "Main camera: " + mainCamera.transform.position;
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
