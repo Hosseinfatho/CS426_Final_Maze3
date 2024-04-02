@@ -1,6 +1,13 @@
-Hossein Fathollahian
-UIN:660251439
-Project: Maze3
-Teammate:Peter Pacholarz, Dylen Greenenwald
-Project Manager: Peter Pacholarz 
-================================
+# Project: Maze3
+Group member:Peter, Dylen, Hossein
+# Hossein Fathollahian
+UIN :660251439
+Schedule and deliverable:
+  1-Preparing the project and planning and coordination necessary for implementation and the type
+    of project in meetings.Wednesday 6 march 2024  by 5pm (estimate: 2 hrs)
+  2-Preparing the necessary documents and files, as well as examining the topic of gravity on different
+    levels of the cube to appear as a three-dimensional attraction.Wednesday 6 march 2024  by 10 pm (estimate: 2 hrs)
+  3-Building a part of the initial prototype and reviewing the early sections in the game. Thursday 7 march 2024  by 5pm (estimate: 4 hrs)
+  4-Implementing physics and collision in the required sections of different parts. Friday 8 march 2024  by 5pm (estimate: 3 hrs)
+  5-Preparing a table for the initial cubes and then placing a sphere and examining the movement and control
+    of the cube. Saturday 9 march 2024  by 8pm(estimate: 4 hrs)
