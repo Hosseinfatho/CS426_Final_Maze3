@@ -154,7 +154,7 @@ public class Controller : MonoBehaviour
         if (mouseWheel != 0)
         {
             Vector3 position = mainCamera.transform.localPosition;
-            position.z += mouseWheel * 6;
+            position.z += mouseWheel * 15;
 
             if (position.z <= -20 && position.z >= -50)
             {
@@ -166,11 +166,11 @@ public class Controller : MonoBehaviour
 
         // Some debug stuff
         debugTextField.text = "";
-        debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
-        debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
-        debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
-        debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
-        debugTextField.text += "Main camera: " + mainCamera.transform.position;
+        // debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
+        // debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
+        // debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
+        // debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
+        // debugTextField.text += "Main camera: " + mainCamera.transform.position;
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
