@@ -5282,21 +5282,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 895423740}
     m_Modifications:
+    - target: {fileID: 3811558291297423360, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
+      propertyPath: m_turnSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5280144502488740022, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.64
+      value: -0.93
       objectReference: {fileID: 0}
     - target: {fileID: 5280144502488740022, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.998757
+      value: 0.9858138
       objectReference: {fileID: 0}
     - target: {fileID: 5280144502488740022, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.049844295
+      value: 0.16784297
       objectReference: {fileID: 0}
     - target: {fileID: 5280144502488740022, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 5.714
+      value: 19.325
       objectReference: {fileID: 0}
     - target: {fileID: 5983244931738092892, guid: 445987c77b27e3b4ca958a9f4e6055d6, type: 3}
       propertyPath: field of view
@@ -6491,10 +6495,10 @@ MonoBehaviour:
   allghost: []
   spawnlimit: {x: 5, y: 1.5, z: 5}
   goalPos: {x: 0, y: 0, z: 0}
-  minSpeed: 0.22
-  maxSpeed: 1.62
-  neighbourDistance: 1.4
-  rotationSpeed: 1.02
+  minSpeed: 0.1
+  maxSpeed: 2
+  neighbourDistance: 1.5
+  rotationSpeed: 1
 --- !u!1 &1541622325
 GameObject:
   m_ObjectHideFlags: 0
@@ -8324,19 +8328,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.34
+      value: 0.40000004
       objectReference: {fileID: 0}
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.34
+      value: 0.40000004
       objectReference: {fileID: 0}
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.34
+      value: 0.40000004
       objectReference: {fileID: 0}
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.71
+      value: 9.65
       objectReference: {fileID: 0}
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_LocalPosition.y
