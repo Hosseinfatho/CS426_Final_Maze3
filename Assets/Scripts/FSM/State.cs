@@ -1,7 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Demo.FSM
+{
     [CreateAssetMenu(menuName = "FSM/State")]
     public sealed class State : BaseState
     {
@@ -13,7 +14,8 @@ using UnityEngine;
             foreach (var action in Action)
                 action.Execute(machine);
 
-            foreach (var transition in Transitions)
+            foreach(var transition in Transitions)
                 transition.Execute(machine);
         }
     }
+}

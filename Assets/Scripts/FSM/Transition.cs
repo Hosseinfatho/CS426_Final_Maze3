@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+namespace Demo.FSM
+{
     [CreateAssetMenu(menuName = "FSM/Transition")]
     public sealed class Transition : ScriptableObject
     {
@@ -17,3 +17,4 @@ using UnityEngine;
                 stateMachine.CurrentState = FalseState;
         }
     }
+}
