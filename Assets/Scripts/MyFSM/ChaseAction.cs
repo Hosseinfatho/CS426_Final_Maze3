@@ -13,7 +13,7 @@ namespace Demo.MyFSM
             var navMeshAgent = stateMachine.GetComponent<NavMeshAgent>();
             var enemySightSensor = stateMachine.GetComponent<EnemySightSensor>();
 
-            navMeshAgent.SetDestination(enemySightSensor.playerCharacter.transform.position);
+            navMeshAgent.SetDestination(enemySightSensor.Player.position);
         }
     }
 }
