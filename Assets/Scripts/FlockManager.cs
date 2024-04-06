@@ -2,36 +2,48 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockManager : MonoBehaviour
-{
-public static FlockManager FM;
-public GameObject GhostPrefab;
-public int numGhost=10;
-public GameObject[] allGhost;
-public Vector3 ghostcube=new Vector3(5,5,3);
-    // Start is called before the first frame update
-    [Header ("GhostFlocking Setting")]
-    [Range(0.0f,5.0f)]
-    public float minspead;
-    [Header ("GhostFlocking Setting")]
-    [Range(0.0f,5.0f)]
-    public float maxspeed;
-    void Start()
-    {
-        allGhost=new GameObject[numGhost];
-        for(int i=0; i<numGhost; i++)
-        {
-            Vector3 pos=this.transform.position+ new Vector3(Random.Range(-ghostcube.x,ghostcube.x),
-                                                             Random.Range(-ghostcube.y,ghostcube.y),
-                                                             Random.Range(-ghostcube.z,ghostcube.z));
-                allGhost[i]=Instantiate(GhostPrefab,pos, Quaternion.identity);
+public class FlockManager : MonoBehaviour {
+
+    public static FlockManager FM;
+    public GameObject ghostPrefab;
+    public int ghostnum = 20;
+    public GameObject[] allghost;
+    public Vector3 spawnlimit = new Vector3(5.0f, 5.0f, 5.0f);
+    public Vector3 goalPos = Vector3.zero;
+
+    [Header("ghost Settings")]
+    [Range(0.0f, 5.0f)] public float minSpeed;
+    [Range(0.0f, 5.0f)] public float maxSpeed;
+    [Range(1.0f, 10.0f)] public float neighbourDistance;
+    [Range(1.0f, 5.0f)] public float rotationSpeed;
+
+    void Start() {
+
+        allghost = new GameObject[ghostnum];
+
+        for (int i = 0; i < ghostnum; ++i) {
+
+            Vector3 pos = this.transform.position + new Vector3(
+                Random.Range(-spawnlimit.x, spawnlimit.x),
+                Random.Range(0, spawnlimit.y),
+                Random.Range(-spawnlimit.z, spawnlimit.z));
+
+            allghost[i] = Instantiate(ghostPrefab, pos, Quaternion.identity);
         }
-        FM=this;
+
+        FM = this;
+        goalPos = this.transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+
+    void Update() {
+
+        if (Random.Range(0, 100) < 10) {
+
+            goalPos = this.transform.position + new Vector3(
+                Random.Range(-spawnlimit.x, spawnlimit.x),
+                Random.Range(0, spawnlimit.y),
+                Random.Range(-spawnlimit.z, spawnlimit.z));
+        }
     }
 }
