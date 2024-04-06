@@ -53,7 +53,7 @@ public class EnemyAI : MonoBehaviour
                         lastPlayerSeenTime = Time.fixedTime;
                         enemyAnimator.ResetTrigger("Walking");
                     }
-                    else if (Time.fixedTime - lastPlayerSeenTime > 2.0f)
+                    else if (Time.fixedTime - lastPlayerSeenTime > 4.0f)
                     {
                         wasPlayerSeen = false;
                     }

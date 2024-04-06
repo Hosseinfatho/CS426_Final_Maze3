@@ -5,38 +5,27 @@ using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject playerContainer;
-    [SerializeField]
-    private GameObject playerCharacter;
-    [SerializeField]
-    private GameObject cameraContainer;
-    [SerializeField]
-    private float playerSpeed;
-    [SerializeField]
-    private float playerGravity;
-    [SerializeField]
-    private float mouseSensitivity;
+    [SerializeField] GameObject cameraContainer;
+    [SerializeField] float playerSpeed;
+    [SerializeField] float mouseSensitivity;
 
     // To be removed later:
-    [SerializeField]
-    private TMP_Text debugTextField;
-    [SerializeField]
-    private Button resetButton;
-    [SerializeField]
-    private Button testButton;
+    [SerializeField] TMP_Text debugTextField;
+    [SerializeField] Button resetButton;
+    [SerializeField] Button testButton;
 
-    private CharacterController controller; //this will be dynamically added to the PlayerContainer
-    private Vector3 movementVector;
-    private Vector3 lastGroundPosition; // last position when we were touching ground
-    private GameObject mainCamera;
+    CharacterController controller; //this will be dynamically added to the PlayerContainer
+    Vector3 movementVector;
+    Vector3 lastGroundPosition; // last position when we were touching ground
+    GameObject mainCamera;
 
+    float playerGravity = -2f;
 
     private void resetPos()
     {
         controller.enabled = false;
-        playerContainer.transform.position = new Vector3(0, 6, 0);
-        playerContainer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        //.transform.position = new Vector3(0, 6, 0);
+        //playerContainer.transform.rotation = Quaternion.Euler(0, 0, 0);
         controller.enabled = true;
     }
 
@@ -62,8 +51,8 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
-        controller = playerContainer.AddComponent<CharacterController>();
-        controller.radius = 0.5f;
+        controller = gameObject.AddComponent<CharacterController>();
+        controller.radius = 1;
         controller.height = 1;
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
@@ -75,9 +64,9 @@ public class Controller : MonoBehaviour
         Returns true if this new line intersects with layerMask
         So to detect the "ground", cube must be made of layer called "Ground"
     */
-    private bool checkGround(Vector3 vector, float distance = 10.0f)
+    private bool checkGround(Vector3 vector, float distance = 10.0f, string layerName = "Ground")
     {
-        return Physics.Raycast(playerContainer.transform.position, vector, distance, 1 << LayerMask.NameToLayer("Ground"));
+        return Physics.Raycast(gameObject.transform.position, vector, distance, 1 << LayerMask.NameToLayer(layerName));
     }
 
     /*
@@ -90,9 +79,9 @@ public class Controller : MonoBehaviour
         [If you didn't notice, this function is not very smart]
     */
     private Vector3[] rotationVectors = { new Vector3(90, 0, 0), new Vector3(-90, 0, 0), new Vector3(0, 90, 0), new Vector3(0, -90, 0), new Vector3(0, 0, 90), new Vector3(0, 0, -90) };
-    private void fixPlayerRotation()
+    private void fixPlayerOrientation()
     {
-        var currentRotation = playerContainer.transform.rotation.eulerAngles;
+        var currentRotation = gameObject.transform.rotation.eulerAngles;
 
         foreach (Vector3 vector in rotationVectors)
         {
@@ -100,15 +89,24 @@ public class Controller : MonoBehaviour
 
             if (checkGround(Quaternion.Euler(rotatedVector) * Vector3.down))
             {
-                playerContainer.transform.rotation = Quaternion.Euler(rotatedVector);
+                gameObject.transform.rotation = Quaternion.Euler(rotatedVector);
             }
         }
     }
 
+    /*
+    *   This rotates the player object so pressing W always moves the player towards the top of the screen
+    */
+    private void fixPlayerRotation()
+    {
+
+    }
+
+
     void Update()
     {
         // Vector that points to the ground
-        Vector3 groundVector = playerContainer.transform.rotation * Vector3.down;
+        Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
 
         // On mouse left click / hold, rotate the camera around the cube
         if (Input.GetMouseButton(0))
@@ -136,12 +134,12 @@ public class Controller : MonoBehaviour
             movementVector.x = Input.GetAxis("Horizontal");
             movementVector.y = 0;
             movementVector.z = Input.GetAxis("Vertical");
-            lastGroundPosition = playerContainer.transform.position;
+            lastGroundPosition = gameObject.transform.position;
         }
         else
         {
-            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, playerContainer.transform.position) > 1)
-                fixPlayerRotation();
+            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 1)
+                fixPlayerOrientation();
 
             // this moves the player down towards the face - gravity
             movementVector.y += playerGravity * Time.deltaTime;
@@ -162,27 +160,15 @@ public class Controller : MonoBehaviour
             }
         }
 
-        controller.Move(playerContainer.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
+        controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
         // Some debug stuff
         debugTextField.text = "";
-        // debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
-        // debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
-        // debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
-        // debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
-        // debugTextField.text += "Main camera: " + mainCamera.transform.position;
-
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        if (horizontal > 0) debugTextField.text += "Pressing D\n";
-        else if (horizontal < 0) debugTextField.text += "Pressing A\n";
-        if (vertical > 0) debugTextField.text += "Pressing W\n";
-        else if (vertical < 0) debugTextField.text += "Pressing S\n";
 
         // Use this to rotate the character model towards the velocity vector
         if (movementVector != Vector3.zero)
         {
-            playerCharacter.transform.forward = playerContainer.transform.rotation * movementVector;
+            //playerCharacter.transform.forward = playerContainer.transform.rotation * movementVector;
         }
     }
 }
