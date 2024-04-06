@@ -1,5 +1,5 @@
+using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,20 +18,21 @@ public class Controller : MonoBehaviour
     Vector3 movementVector;
     Vector3 lastGroundPosition; // last position when we were touching ground
     GameObject mainCamera;
+    GameObject cameraTopPlane;
 
     float playerGravity = -2f;
 
     private void resetPos()
     {
         controller.enabled = false;
-        //.transform.position = new Vector3(0, 6, 0);
-        //playerContainer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        gameObject.transform.position = new Vector3(-8, 10.5f, 1);
+        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
         controller.enabled = true;
     }
 
     private void testButtonPressed()
     {
-
+        fixPlayerRotation();
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -57,6 +58,7 @@ public class Controller : MonoBehaviour
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
         mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
+        cameraTopPlane = FindChildWithTag(cameraContainer, "CameraTopPlane");
     }
 
     /*
@@ -85,21 +87,37 @@ public class Controller : MonoBehaviour
 
         foreach (Vector3 vector in rotationVectors)
         {
-            var rotatedVector = currentRotation + vector;
+            var rotatedAngle = Quaternion.Euler(currentRotation + vector);
 
-            if (checkGround(Quaternion.Euler(rotatedVector) * Vector3.down))
+            if (checkGround(rotatedAngle * Vector3.down))
             {
-                gameObject.transform.rotation = Quaternion.Euler(rotatedVector);
+                gameObject.transform.rotation = rotatedAngle;
+                return;
             }
         }
     }
 
-    /*
-    *   This rotates the player object so pressing W always moves the player towards the top of the screen
-    */
+    private float _round(float value)
+    {
+        float sign = 1;
+        if (value < 0) sign = -1;
+
+        float mult = 0;
+
+        while (Math.Abs(value) >= 45)
+        {
+            mult++;
+            value -= 90 * sign;
+        }
+
+        return 90 * mult * sign;
+    }
+
     private void fixPlayerRotation()
     {
-
+        Vector3 rotationVect = Quaternion.LookRotation(cameraTopPlane.transform.position - gameObject.transform.position, gameObject.transform.rotation * Vector3.up).eulerAngles;
+        rotationVect.Set(_round(rotationVect.x), _round(rotationVect.y), _round(rotationVect.z));
+        gameObject.transform.rotation = Quaternion.Euler(rotationVect);
     }
 
 
@@ -164,6 +182,7 @@ public class Controller : MonoBehaviour
 
         // Some debug stuff
         debugTextField.text = "";
+        debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
 
         // Use this to rotate the character model towards the velocity vector
         if (movementVector != Vector3.zero)
