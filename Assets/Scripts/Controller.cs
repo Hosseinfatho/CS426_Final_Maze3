@@ -101,6 +101,7 @@ public class Controller : MonoBehaviour
         return false;
     }
 
+    // This is still broken
     private void fixPlayerRotation()
     {
         if (!cameraInSight()) return;
@@ -165,7 +166,7 @@ public class Controller : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             cameraContainer.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
-            fixPlayerRotation();
+            //fixPlayerRotation();
         }
         else
         {
@@ -196,7 +197,7 @@ public class Controller : MonoBehaviour
             if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 1)
             {
                 fixPlayerOrientation();
-                fixPlayerRotation();
+                //fixPlayerRotation();
             }
 
 
