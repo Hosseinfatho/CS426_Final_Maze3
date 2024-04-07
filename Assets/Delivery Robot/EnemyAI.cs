@@ -48,7 +48,7 @@ public class EnemyAI : MonoBehaviour
             // if player no longer in sight, go to the last player's known location
             else if (wasPlayerSeen)
             {
-                if (Vector3.Distance(transform.position, lastPlayerPosition) < 0.5)
+                if (Vector3.Distance(transform.position, agent.pathEndPosition) < 0.5)
                 {
                     if (lastPlayerSeenTime == 0)
                     {
