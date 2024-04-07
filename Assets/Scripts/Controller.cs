@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
+    [SerializeField] GameObject playerModel;
     [SerializeField] GameObject cameraContainer;
     [SerializeField] float playerSpeed;
     [SerializeField] float mouseSensitivity;
@@ -20,8 +21,11 @@ public class Controller : MonoBehaviour
     Vector3 lastGroundPosition; // last position when we were touching ground
     GameObject mainCamera;
     GameObject cameraTopPlane;
+    Animator playerAnimator;
 
     float playerGravity = -2f;
+    float lerpTime = 0;
+    float smoothing = 0.25f;
 
     private void resetPos()
     {
@@ -60,6 +64,7 @@ public class Controller : MonoBehaviour
         testButton.onClick.AddListener(testButtonPressed);
         mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
         cameraTopPlane = FindChildWithTag(cameraContainer, "CameraTopPlane");
+        playerAnimator = GetComponentInChildren<Animator>();
     }
 
     /*
@@ -159,6 +164,8 @@ public class Controller : MonoBehaviour
 
     void Update()
     {
+        debugTextField.text = "";
+
         // Vector that points to the ground according to the current player's rotation (not actual ground vector)
         Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
 
@@ -166,11 +173,6 @@ public class Controller : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             cameraContainer.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
-            //fixPlayerRotation();
-        }
-        else
-        {
-
         }
 
         // On mouse right click, center the camera on the player
@@ -185,12 +187,23 @@ public class Controller : MonoBehaviour
             Allow for player input only when character is "touching" the ground.
             This also sets how far above the ground character is hovering.
         */
+        playerAnimator.ResetTrigger("Walking");
         if (checkGround(groundVector, 0.5f))
         {
-            movementVector.x = Input.GetAxis("Horizontal");
-            movementVector.y = 0;
-            movementVector.z = Input.GetAxis("Vertical");
             lastGroundPosition = gameObject.transform.position;
+            movementVector.Set(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            movementVector = Vector3.ClampMagnitude(movementVector, 1);
+
+
+            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+            {
+                playerAnimator.SetTrigger("Walking");
+            }
+
+            if (movementVector == Vector3.zero)
+            {
+                lerpTime = 0;
+            }
         }
         else
         {
@@ -199,7 +212,6 @@ public class Controller : MonoBehaviour
                 fixPlayerOrientation();
                 //fixPlayerRotation();
             }
-
 
             // this moves the player down towards the face - gravity
             movementVector.y += playerGravity * Time.deltaTime;
@@ -222,19 +234,13 @@ public class Controller : MonoBehaviour
 
         controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
-        // Some debug stuff
-        debugTextField.text = "";
-        debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
-        debugTextField.text += "Player vector norm max: " + getPlayerUpVector().ToString() + "\n";
-        debugTextField.text += "Player vector norm max ground: " + (getPlayerUpVector() * -1).ToString() + "\n";
-        debugTextField.text += "Camera max normal: " + (_normalizedMaxVector(cameraContainer.transform.rotation.eulerAngles)).ToString() + "\n";
-        debugTextField.text += "Camera in sight: " + cameraInSight().ToString() + "\n";
-        debugTextField.text += "Main Camera: " + mainCamera.transform.position.ToString() + "\n";
-
-        // Use this to rotate the character model towards the velocity vector
-        if (movementVector != Vector3.zero)
+        Vector3 lookDirection = movementVector.normalized;
+        lookDirection.y = 0;
+        if (lookDirection != Vector3.zero)
         {
-            //playerCharacter.transform.forward = playerContainer.transform.rotation * movementVector;
+            playerModel.transform.localRotation = Quaternion.Lerp(playerModel.transform.localRotation, Quaternion.LookRotation(lookDirection.normalized), Mathf.Clamp01(lerpTime * (1 - smoothing)));
         }
+        lerpTime += Time.deltaTime;
+
     }
 }
