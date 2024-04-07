@@ -6,12 +6,12 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private Animator enemyAnimator;
-    [SerializeField] private Transform[] waypoints;
-    [SerializeField] private float viewDistance;
 
-    [SerializeField] private GameObject player;
+    [SerializeField] Transform[] waypoints;
+    [SerializeField] float viewDistance;
+    [SerializeField] GameObject player;
 
+    Animator enemyAnimator;
     NavMeshAgent agent;
     int waypointIndex;
     Vector3 target;
@@ -27,6 +27,8 @@ public class EnemyAI : MonoBehaviour
         lastPlayerPosition = Vector3.zero;
         wasPlayerSeen = false;
         movementEnabled = true;
+
+        enemyAnimator = GetComponentInChildren<Animator>();
 
         UpdateDestination();
     }
