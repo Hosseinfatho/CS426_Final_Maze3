@@ -8,7 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Hossein.unity
     guid: ff54da344b73d564b828eb714a4f420d
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: c8604bb67ca52484589f8e761a1a444d
+  - enabled: 1
+    path: Assets/Scenes/Peter_Assignment6.unity
+    guid: 9107690f4142cd44fada4a3d9f4f542e
   m_configObjects: {}
