@@ -1,48 +1,43 @@
+using System;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject playerContainer;
-    [SerializeField]
-    private GameObject playerCharacter;
-    [SerializeField]
-    private GameObject cameraContainer;
-    [SerializeField]
-    private float playerSpeed;
-    [SerializeField]
-    private float playerGravity;
-    [SerializeField]
-    private float mouseSensitivity;
+    [SerializeField] GameObject playerModel;
+    [SerializeField] GameObject cameraContainer;
+    [SerializeField] float playerSpeed;
+    [SerializeField] float mouseSensitivity;
 
     // To be removed later:
-    [SerializeField]
-    private TMP_Text debugTextField;
-    [SerializeField]
-    private Button resetButton;
-    [SerializeField]
-    private Button testButton;
+    [SerializeField] TMP_Text debugTextField;
+    [SerializeField] Button resetButton;
+    [SerializeField] Button testButton;
 
-    private CharacterController controller; //this will be dynamically added to the PlayerContainer
-    private Vector3 movementVector;
-    private Vector3 lastGroundPosition; // last position when we were touching ground
-    private GameObject mainCamera;
+    CharacterController controller; //this will be dynamically added to the PlayerContainer
+    Vector3 movementVector;
+    Vector3 lastGroundPosition; // last position when we were touching ground
+    GameObject mainCamera;
+    GameObject cameraTopPlane;
+    Animator playerAnimator;
 
+    float playerGravity = -2f;
+    float lerpTime = 0;
+    float smoothing = 0.25f;
 
     private void resetPos()
     {
         controller.enabled = false;
-        playerContainer.transform.position = new Vector3(0, 6, 0);
-        playerContainer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        gameObject.transform.position = new Vector3(-8, 10.5f, 1);
+        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
         controller.enabled = true;
     }
 
     private void testButtonPressed()
     {
-
+        fixPlayerRotation();
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -62,12 +57,14 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
-        controller = playerContainer.AddComponent<CharacterController>();
-        controller.radius = 0.5f;
+        controller = gameObject.AddComponent<CharacterController>();
+        controller.radius = 1;
         controller.height = 1;
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
         mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
+        cameraTopPlane = FindChildWithTag(cameraContainer, "CameraTopPlane");
+        playerAnimator = GetComponentInChildren<Animator>();
     }
 
     /*
@@ -75,55 +72,114 @@ public class Controller : MonoBehaviour
         Returns true if this new line intersects with layerMask
         So to detect the "ground", cube must be made of layer called "Ground"
     */
-    private bool checkGround(Vector3 vector, float distance = 10.0f)
+    private bool checkGround(Vector3 vector, float distance = 10.0f, string layerName = "Ground")
     {
-        return Physics.Raycast(playerContainer.transform.position, vector, distance, 1 << LayerMask.NameToLayer("Ground"));
+        return Physics.Raycast(gameObject.transform.position, vector, distance, 1 << LayerMask.NameToLayer(layerName));
     }
 
-    /*
-        If ground not detected, then player possibly went over the edge,
-        so we need to rotate the player so we know where the "new" ground is.
-
-        Assumes that at any point it doesn't require to rotate more than 90* in any direction.
-        Rotates only in one axis at the time.
-
-        [If you didn't notice, this function is not very smart]
-    */
     private Vector3[] rotationVectors = { new Vector3(90, 0, 0), new Vector3(-90, 0, 0), new Vector3(0, 90, 0), new Vector3(0, -90, 0), new Vector3(0, 0, 90), new Vector3(0, 0, -90) };
-    private void fixPlayerRotation()
+    private void fixPlayerOrientation()
     {
-        var currentRotation = playerContainer.transform.rotation.eulerAngles;
+        var currentRotation = gameObject.transform.rotation.eulerAngles;
 
         foreach (Vector3 vector in rotationVectors)
         {
-            var rotatedVector = currentRotation + vector;
+            var rotatedAngle = Quaternion.Euler(currentRotation + vector);
 
-            if (checkGround(Quaternion.Euler(rotatedVector) * Vector3.down))
+            if (checkGround(rotatedAngle * Vector3.down))
             {
-                playerContainer.transform.rotation = Quaternion.Euler(rotatedVector);
+                gameObject.transform.rotation = rotatedAngle;
+                return;
             }
         }
     }
 
+    private bool cameraInSight()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(mainCamera.transform.position, gameObject.transform.position - mainCamera.transform.position, out hit, 100))
+        {
+            return hit.collider.tag == "Player";
+        }
+
+        return false;
+    }
+
+    // This is still broken
+    private void fixPlayerRotation()
+    {
+        if (!cameraInSight()) return;
+
+        Quaternion lookRot = Quaternion.LookRotation((cameraTopPlane.transform.position - gameObject.transform.position).normalized, getPlayerUpVector());
+        gameObject.transform.rotation = Quaternion.Euler(_roundVector(lookRot.eulerAngles));
+    }
+
+
+
+
+    // Rounds the given number to the closest right angle value (so 44* is rounded to 0, and 46* rounded to 90)
+    private float _round(float value)
+    {
+        float sign = 1;
+        if (value < 0) sign = -1;
+
+        float mult = 0;
+
+        while (Math.Abs(value) >= 45)
+        {
+            mult++;
+            value -= 90 * sign;
+        }
+
+        return 90 * mult * sign;
+    }
+
+    private Vector3 _roundVector(Vector3 vect)
+    {
+        vect.Set(_round(vect.x), _round(vect.y), _round(vect.z));
+        return vect;
+    }
+
+    // 
+    private Vector3 _normalizedMaxVector(Vector3 vect)
+    {
+        float max = vect.x;
+
+        if (Math.Abs(vect.y) > Math.Abs(max)) max = vect.y;
+        if (Math.Abs(vect.z) > Math.Abs(max)) max = vect.z;
+
+        if (vect.x != max) vect.x = 0;
+        if (vect.y != max) vect.y = 0;
+        if (vect.z != max) vect.z = 0;
+
+        return vect.normalized;
+    }
+
+    private Vector3 getPlayerUpVector()
+    {
+        return _normalizedMaxVector(gameObject.transform.position);
+    }
+
+
     void Update()
     {
-        // Vector that points to the ground
-        Vector3 groundVector = playerContainer.transform.rotation * Vector3.down;
+        debugTextField.text = "";
+
+        // Vector that points to the ground according to the current player's rotation (not actual ground vector)
+        Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
 
         // On mouse left click / hold, rotate the camera around the cube
         if (Input.GetMouseButton(0))
         {
             cameraContainer.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
         }
-        else
-        {
-
-        }
 
         // On mouse right click, center the camera on the player
         if (Input.GetMouseButtonDown(1))
         {
             cameraContainer.transform.position = groundVector * -1;
+            cameraContainer.transform.rotation = gameObject.transform.rotation;
             cameraContainer.transform.LookAt(Vector3.zero);
         }
 
@@ -131,17 +187,31 @@ public class Controller : MonoBehaviour
             Allow for player input only when character is "touching" the ground.
             This also sets how far above the ground character is hovering.
         */
+        playerAnimator.ResetTrigger("Walking");
         if (checkGround(groundVector, 0.5f))
         {
-            movementVector.x = Input.GetAxis("Horizontal");
-            movementVector.y = 0;
-            movementVector.z = Input.GetAxis("Vertical");
-            lastGroundPosition = playerContainer.transform.position;
+            lastGroundPosition = gameObject.transform.position;
+            movementVector.Set(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            movementVector = Vector3.ClampMagnitude(movementVector, 1);
+
+
+            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+            {
+                playerAnimator.SetTrigger("Walking");
+            }
+
+            if (movementVector == Vector3.zero)
+            {
+                lerpTime = 0;
+            }
         }
         else
         {
-            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, playerContainer.transform.position) > 1)
-                fixPlayerRotation();
+            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 1)
+            {
+                fixPlayerOrientation();
+                //fixPlayerRotation();
+            }
 
             // this moves the player down towards the face - gravity
             movementVector.y += playerGravity * Time.deltaTime;
@@ -162,27 +232,15 @@ public class Controller : MonoBehaviour
             }
         }
 
-        controller.Move(playerContainer.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
+        controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
-        // Some debug stuff
-        debugTextField.text = "";
-        // debugTextField.text += "Last Ground Distance: " + Vector3.Distance(lastGroundPosition, playerContainer.transform.position).ToString() + "\n";
-        // debugTextField.text += "Movement vector: " + movementVector.ToString() + "\n";
-        // debugTextField.text += "Ground vector: " + groundVector.ToString() + "\n";
-        // debugTextField.text += "Ground vector touching ground: " + checkGround(groundVector).ToString() + '\n';
-        // debugTextField.text += "Main camera: " + mainCamera.transform.position;
-
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        if (horizontal > 0) debugTextField.text += "Pressing D\n";
-        else if (horizontal < 0) debugTextField.text += "Pressing A\n";
-        if (vertical > 0) debugTextField.text += "Pressing W\n";
-        else if (vertical < 0) debugTextField.text += "Pressing S\n";
-
-        // Use this to rotate the character model towards the velocity vector
-        if (movementVector != Vector3.zero)
+        Vector3 lookDirection = movementVector.normalized;
+        lookDirection.y = 0;
+        if (lookDirection != Vector3.zero)
         {
-            playerCharacter.transform.forward = playerContainer.transform.rotation * movementVector;
+            playerModel.transform.localRotation = Quaternion.Lerp(playerModel.transform.localRotation, Quaternion.LookRotation(lookDirection.normalized), Mathf.Clamp01(lerpTime * (1 - smoothing)));
         }
+        lerpTime += Time.deltaTime;
+
     }
 }

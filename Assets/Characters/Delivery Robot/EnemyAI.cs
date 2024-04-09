@@ -6,12 +6,12 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private Animator enemyAnimator;
-    [SerializeField] private Transform[] waypoints;
-    [SerializeField] private float viewDistance;
 
-    [SerializeField] private GameObject player;
+    [SerializeField] Transform[] waypoints;
+    [SerializeField] float viewDistance;
+    [SerializeField] GameObject player;
 
+    Animator enemyAnimator;
     NavMeshAgent agent;
     int waypointIndex;
     Vector3 target;
@@ -27,6 +27,8 @@ public class EnemyAI : MonoBehaviour
         lastPlayerPosition = Vector3.zero;
         wasPlayerSeen = false;
         movementEnabled = true;
+
+        enemyAnimator = GetComponentInChildren<Animator>();
 
         UpdateDestination();
     }
@@ -46,14 +48,14 @@ public class EnemyAI : MonoBehaviour
             // if player no longer in sight, go to the last player's known location
             else if (wasPlayerSeen)
             {
-                if (Vector3.Distance(transform.position, lastPlayerPosition) < 0.5)
+                if (Vector3.Distance(transform.position, agent.pathEndPosition) < 0.5)
                 {
                     if (lastPlayerSeenTime == 0)
                     {
                         lastPlayerSeenTime = Time.fixedTime;
                         enemyAnimator.ResetTrigger("Walking");
                     }
-                    else if (Time.fixedTime - lastPlayerSeenTime > 2.0f)
+                    else if (Time.fixedTime - lastPlayerSeenTime > 4.0f)
                     {
                         wasPlayerSeen = false;
                     }
