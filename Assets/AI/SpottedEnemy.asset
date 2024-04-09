@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc85840c5c74d0499e3a086e209b1fe, type: 3}
   m_Name: SpottedEnemy
   m_EditorClassIdentifier: 
-  Decision: {fileID: 0}
-  TrueState: {fileID: 0}
-  FalseState: {fileID: 0}
+  Decision: {fileID: 11400000, guid: 33e47a97c8f9c3741bcc719d9bceb564, type: 2}
+  TrueState: {fileID: 11400000, guid: 9eb2f06e30bcd474a9c4ffd9e8fb3b77, type: 2}
+  FalseState: {fileID: 11400000, guid: ebf409020e38e924db5f7b0703743ac8, type: 2}

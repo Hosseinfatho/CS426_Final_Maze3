@@ -4741,7 +4741,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 87d7ba1da4220b14980fa3738f7db388, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 6c45706188e03f94f9e8d256787ba201, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &815625465
 GameObject:
@@ -5069,7 +5069,7 @@ GameObject:
   - component: {fileID: 895423740}
   - component: {fileID: 895423741}
   m_Layer: 0
-  m_Name: PlayerCharacter
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5746,10 +5746,23 @@ PrefabInstance:
       propertyPath: waypoints.Array.data[4]
       value: 
       objectReference: {fileID: 177844746}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9199782873797374753, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1795107227}
+    - targetCorrespondingSourceObject: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1795107231}
+    - targetCorrespondingSourceObject: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1795107232}
+    - targetCorrespondingSourceObject: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1795107233}
   m_SourcePrefab: {fileID: 100100000, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
 --- !u!1 &1001848138
 GameObject:
@@ -6507,7 +6520,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 2b763c1df20654d41a9f7b099275298e, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 06dd1ae7d8e4f2840bf2dfe9b5a67cb9, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1279788138
 GameObject:
@@ -9191,6 +9204,69 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1794758492}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1795107226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
+  m_PrefabInstance: {fileID: 984431805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1795107227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795107226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba484f845c05c349b1b5124ab4e9cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _initialState: {fileID: 11400000, guid: d59c58a844a717e4dae2173302d02c6b, type: 2}
+--- !u!114 &1795107231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795107226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1902b306ef17564995c34f1950a0734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waypoints:
+  - {fileID: 2102392473}
+  - {fileID: 973148716}
+  - {fileID: 1394477612}
+  - {fileID: 1493319476}
+  - {fileID: 177844746}
+--- !u!114 &1795107232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795107226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df47c4aca70ff744942b12c9067cda9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ignoreMask:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &1795107233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795107226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dbbe09cca223c145844613704f54003, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1797668893
 GameObject:
   m_ObjectHideFlags: 0
