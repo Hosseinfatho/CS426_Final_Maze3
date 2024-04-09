@@ -28,7 +28,7 @@ public class Menu : MonoBehaviour
     void Start()
     {
         populateResolutionDropbox();
-
+        Time.timeScale = 1;
 
         buttonFullScreen.onClick.AddListener(fullScreenToggle);
         fullScreenToggle(); //to set the var to false by default and populate the button's text
@@ -80,8 +80,8 @@ public class Menu : MonoBehaviour
         Application.Quit();
     }
 
-    public void playerLevel1()
+    public void playerLevel(string name)
     {
-        SceneManager.LoadScene("Peter_Assignment6");
+        SceneManager.LoadScene(name);
     }
 }
