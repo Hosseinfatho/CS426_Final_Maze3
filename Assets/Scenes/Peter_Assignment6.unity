@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667555, g: 0.48427176, b: 0.5645241, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5716,7 +5716,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
       propertyPath: m_Name
-      value: EnemyCharacter (1)
+      value: FSMEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 9199782873797374753, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
       propertyPath: player
@@ -11209,7 +11209,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 921361245131227225, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
       propertyPath: m_Name
-      value: EnemyCharacter
+      value: PathfindingEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 9199782873797374753, guid: 4e1239e1fc0bb2d4b830ef1e411aeb09, type: 3}
       propertyPath: player
