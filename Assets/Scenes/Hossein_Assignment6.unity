@@ -20213,6 +20213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1665166734}
   - component: {fileID: 1665166733}
+  - component: {fileID: 1665166735}
   m_Layer: 0
   m_Name: FlockManager
   m_TagString: Untagged
@@ -20256,6 +20257,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1665166735
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665166732}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a05c027220f6f4940a7ef0edc86db75d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1665168658
 GameObject:
   m_ObjectHideFlags: 0
@@ -20743,6 +20765,14 @@ PrefabInstance:
     - target: {fileID: 3855980723789286084, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5492875352703293492, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: m_UpdateMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5492875352703293492, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
       propertyPath: Loop
@@ -22962,7 +22992,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.9169811, g: 0.08131714, b: 0.08131714, a: 1}
   m_Intensity: 10
-  m_Range: 3.18
+  m_Range: 3.6
   m_SpotAngle: 83.3
   m_InnerSpotAngle: 20.6
   m_CookieSize: 10
