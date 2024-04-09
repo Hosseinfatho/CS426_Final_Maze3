@@ -4318,20 +4318,20 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ccd8c4f02b09bca4894aa3ab367883b9, type: 3}
+  m_audioClip: {fileID: 8300000, guid: b0ab2ee4034a47545bcacd9cadfb1824, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.329
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 5000
+  MinDistance: 0.1
+  MaxDistance: 3
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -8652,6 +8652,26 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: m_Volume
+      value: 0.473
+      objectReference: {fileID: 0}
+    - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: MaxDistance
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: MinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7653641575353625148, guid: 711dea4431393e041950d4d37b32626c, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ccd8c4f02b09bca4894aa3ab367883b9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
