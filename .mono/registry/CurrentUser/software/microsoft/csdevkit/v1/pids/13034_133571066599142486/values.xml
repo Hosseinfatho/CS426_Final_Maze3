@@ -1,3 +1,7 @@
 ﻿<values>
+<<<<<<< Updated upstream
   <value name="StillAlive" type="qword">133571147651281224</value>
+=======
+  <value name="StillAlive" type="qword">133574373936037667</value>
+>>>>>>> Stashed changes
 </values>
