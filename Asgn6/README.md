@@ -16,14 +16,9 @@ The main idea behind this simple introductory level is to allow players to get c
 
 The theme of the game is basically that we are inside of a process, and want to transport a malicious payload to a critical location in order to wreak some sort of havoc (it is a work in progress). This manifests in boxes representing these payloads, and our character having to navigate antivirus and other security mechanisms to complete the exploitation.
 
- In this game, which features a three-dimensional table with each face being a separate table, players must navigate
- their paths from the starting point to the endpoint. In between, some traps and hazards deduct points from the player 
-and resources that add to the player's score.
-Three types of enemies are defined: 
-firstly, a major enemy is positioned in fixed locations and passes through, which results in complete failure.
-The second enemy moves along the table paths, patrolling, and encountering it deducts points from the player.
-The third enemy consists of spirits that move randomly and collectively based on flocking behavior, capable of moving among walls,
-deducting a very small amount of points from the player upon collision.
+Two types of enemies are defined:
+The first enemy moves along the table paths, patrolling, and encountering it deducts points from the player.
+The second enemy consists of spirits that move randomly and collectively based on flocking behavior, capable of moving among walls deducting a very small amount of points from the player upon collision.
 
 ### Division of Labor
 
