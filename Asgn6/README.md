@@ -14,20 +14,7 @@ Our level design is a very rough prototype. However, there are seeds to some of 
 
 The main idea behind this simple introductory level is to allow players to get comfortable with navigating the maze, given that the controls demand potentially simultaneous keyboard and mouse usage. The paths are not obstructed, traps (i.e. that teleport you) are not yet implemented; this all makes for an extremely usable floor plan, but one that is not very challenging. This is because we want to include a *real* level that the players will experience that allows them to learn the game without an explicit tutorial and also without getting to frustrated to advance further. We intend on incorporating dialogue in this simple level for illustrative purposes -- enemies die immediately upon contacting the player at this point in time.
 
-<<<<<<< Updated upstream
-The theme of the game is basically that we are inside of a process, and want to transport a malicious payload to a critical location in order to wreak some sort of havoc (it is a work in progress). This manifests in boxes representing these payloads, and our character having to navigate antivirus and other security mechanisms to complete the exploitation.
-
- In this game, which features a three-dimensional table with each face being a separate table, players must navigate
- their paths from the starting point to the endpoint. In between, some traps and hazards deduct points from the player 
-and resources that add to the player's score.
-Three types of enemies are defined: 
-firstly, a major enemy is positioned in fixed locations and passes through, which results in complete failure.
-The second enemy moves along the table paths, patrolling, and encountering it deducts points from the player.
-The third enemy consists of spirits that move randomly and collectively based on flocking behavior, capable of moving among walls,
-deducting a very small amount of points from the player upon collision.
-=======
 The theme of the game is basically that we are inside of a process, and want to transport a malicious payload to a critical location in order to wreak some sort of havoc (it is a work in progress). This manifests in boxes representing these payloads, and our character having to navigate antivirus and other security mechanisms to complete the exploitation. The tron tiles on the floor and the sci-fi panels on the walls are meant to set the tone for this futuristic, computer-like environment. The lighting on the characters indicates an adversarial context, pitting the malicious thread (the player) against the service worker / benign threads.
->>>>>>> Stashed changes
 
 ### Division of Labor
 
