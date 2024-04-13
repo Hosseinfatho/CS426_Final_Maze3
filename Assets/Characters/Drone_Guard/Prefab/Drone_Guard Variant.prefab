@@ -33,6 +33,10 @@ PrefabInstance:
       value: 0.00002
       objectReference: {fileID: 0}
     - target: {fileID: -6057140222963153312, guid: 5090c1d92c3e3034a85460b495fcf820, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 7e1b24adfacf4134895b89e75563b54a, type: 3}
+    - target: {fileID: -6057140222963153312, guid: 5090c1d92c3e3034a85460b495fcf820, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: b73383ab2459f2643abe557b2d08dcd5, type: 2}
@@ -133,7 +137,7 @@ PrefabInstance:
       addedObject: {fileID: 1988575052}
     - targetCorrespondingSourceObject: {fileID: -927199367670048503, guid: 5090c1d92c3e3034a85460b495fcf820, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6479837488500377036}
+      addedObject: {fileID: 8452445268982732431}
   m_SourcePrefab: {fileID: 100100000, guid: 5090c1d92c3e3034a85460b495fcf820, type: 3}
 --- !u!1 &6696928936052566065 stripped
 GameObject:
@@ -153,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 0}
---- !u!114 &6479837488500377036
+--- !u!114 &8452445268982732431
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
