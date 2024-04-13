@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour
 
     Animator enemyAnimator;
     NavMeshAgent agent;
+    AudioSource audio;
     int waypointIndex;
     Vector3 target;
     Vector3 lastPlayerPosition;
@@ -28,7 +29,11 @@ public class EnemyAI : MonoBehaviour
         wasPlayerSeen = false;
         movementEnabled = true;
 
+        // To set animation triggers
         enemyAnimator = GetComponentInChildren<Animator>();
+
+        // To play audio clips
+        audio = GetComponent<AudioSource>();
 
         UpdateDestination();
     }
@@ -79,6 +84,7 @@ public class EnemyAI : MonoBehaviour
             movementEnabled = false;
             enemyAnimator.ResetTrigger("Walking");
             enemyAnimator.SetTrigger("Die");
+            audio.Play();
         }
     }
 
