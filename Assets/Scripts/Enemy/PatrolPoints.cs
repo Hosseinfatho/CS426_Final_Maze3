@@ -6,7 +6,9 @@ namespace Demo.Enemy
     {
         public Transform[] waypoints; // Array of patrol waypoints
 
-        private int currentWaypointIndex = 0; // Index of the current waypoint
+        // // NOTE: private scope ideal for integrity, but need game to work
+        // public int currentWaypointIndex = 0; // Index of the current waypoint
+        private int currentWaypointIndex = 0;
 
         // Get the next patrol waypoint
         public Transform GetNext()
