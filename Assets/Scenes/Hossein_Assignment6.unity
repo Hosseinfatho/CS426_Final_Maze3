@@ -5046,7 +5046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostPrefab: {fileID: 2614241744216947712, guid: 5bd685975a63f0542b3ac964a6f0f778, type: 3}
-  ghostnum: 10
+  ghostnum: 5
   allghost: []
   spawnlimit: {x: 10, y: 10, z: 2}
   goalPos: {x: 0, y: 0, z: 0}
