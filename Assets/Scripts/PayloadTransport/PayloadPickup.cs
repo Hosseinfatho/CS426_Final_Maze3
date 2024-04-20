@@ -6,7 +6,7 @@ using UnityEngine;
 public class PayloadPickup : MonoBehaviour
 {
   private Animator animator;
-  private NavMeshAgent navMeshAgent;
+  private UnityEngine.AI.NavMeshAgent navMeshAgent;
 
   private void OnTriggerEnter(Collider other)
   {
@@ -16,11 +16,9 @@ public class PayloadPickup : MonoBehaviour
     {
       // Debug.Log("Setting animation trigger for box up!");
       animator = other.transform.parent.GetComponentInChildren<Animator>();
-      navMeshAgent = other.transform.parent.GetComponentInChildren<NavMeshAgent>();
+      navMeshAgent = other.transform.parent.GetComponentInChildren<UnityEngine.AI.NavMeshAgent>();
 
       animator.ResetTrigger("Walking");
-      navMeshAgent.disable;
-
       animator.SetTrigger("BoxDown");
       animator.SetTrigger("BoxUp");
     }
