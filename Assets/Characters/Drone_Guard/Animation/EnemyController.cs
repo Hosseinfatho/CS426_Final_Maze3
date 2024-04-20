@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     public Animator animator; // Reference to the Animator component of the enemy
     public float attackRange = 5f; // Range at which the player triggers the attack animation
 
-    private bool isPlayerInRange = false;
+    // private bool isPlayerInRange = false;
 
     void Update()
     {
@@ -21,14 +21,14 @@ public class EnemyController : MonoBehaviour
         if (distanceToPlayer <= attackRange)
         {
             // Player is in attack range
-            isPlayerInRange = true;
+            // isPlayerInRange = true;
             // Trigger attack animation
             animator.SetBool("isAttacking", true);
         }
         else
         {
             // Player is not in attack range
-            isPlayerInRange = false;
+            // isPlayerInRange = false;
             // Set back to idle animation
             animator.SetBool("isAttacking", false);
         }

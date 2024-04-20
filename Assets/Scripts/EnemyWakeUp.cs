@@ -14,7 +14,7 @@ public class EnemyWakeUp : MonoBehaviour
 
     public float detectionRange = 10f; // Range at which the player triggers the spotlight and audio
 
-    private bool isPlayerClose = false;
+    // private bool isPlayerClose = false;
 
     void Update()
     {
@@ -25,7 +25,7 @@ public class EnemyWakeUp : MonoBehaviour
         if (distanceToPlayer <= detectionRange)
         {
             // Player is close to enemy
-            isPlayerClose = true;
+            // isPlayerClose = true;
             // Turn on spotlight
             spotlight.enabled = true;
             // Change spotlight color randomly
@@ -36,7 +36,7 @@ public class EnemyWakeUp : MonoBehaviour
         else
         {
             // Player is not close to enemy
-            isPlayerClose = false;
+            // isPlayerClose = false;
             // Turn off spotlight
             spotlight.enabled = false;
             // Stop audio
