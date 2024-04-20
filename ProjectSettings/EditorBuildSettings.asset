@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Hossein.unity
     guid: ff54da344b73d564b828eb714a4f420d
   - enabled: 0
-    path: Assets/Scenes/Individual/Peter/MainMenu.unity
+    path: Assets/Scenes/Group/MainMenu.unity
     guid: c8604bb67ca52484589f8e761a1a444d
   - enabled: 0
     path: Assets/Scenes/Hossein.unity
