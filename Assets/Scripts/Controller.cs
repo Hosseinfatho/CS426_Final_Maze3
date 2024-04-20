@@ -1,6 +1,4 @@
-using System;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,10 +34,7 @@ public class Controller : MonoBehaviour
 
     private void resetPos()
     {
-        controller.enabled = false;
-        gameObject.transform.position = new Vector3(-8, 10.5f, 1);
         gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-        controller.enabled = true;
     }
 
     private void testButtonPressed()
@@ -92,7 +87,7 @@ public class Controller : MonoBehaviour
     private Vector3[] rotationVectors = { new Vector3(90, 0, 0), new Vector3(-90, 0, 0), new Vector3(0, 90, 0), new Vector3(0, -90, 0), new Vector3(0, 0, 90), new Vector3(0, 0, -90) };
     private void fixPlayerOrientation()
     {
-        var currentRotation = gameObject.transform.rotation.eulerAngles;
+        var currentRotation = roundToNearest90(gameObject.transform.rotation.eulerAngles);
 
         foreach (Vector3 vector in rotationVectors)
         {
@@ -105,6 +100,42 @@ public class Controller : MonoBehaviour
                 return;
             }
         }
+    }
+
+
+    /*
+        This doesn't work but there's still a chance
+    */
+    float roundToNearest90(float angle)
+    {
+        float remainder = angle % 90;
+
+        if (remainder >= 45)
+            return Mathf.Ceil(angle / 90) * 90;
+        else if (remainder <= -45)
+            return Mathf.Floor(angle / 90) * 90;
+        else
+            return Mathf.Round(angle / 90) * 90;
+    }
+    Vector3 roundToNearest90(Vector3 vect)
+    {
+        vect.x = roundToNearest90(vect.x);
+        vect.y = roundToNearest90(vect.y);
+        vect.z = roundToNearest90(vect.z);
+
+        return vect;
+    }
+    void fixPlayerOrientation2()
+    {
+        Quaternion wantedOrientation = gameObject.transform.rotation;
+        wantedOrientation.SetLookRotation(Vector3.zero - gameObject.transform.position);
+        wantedOrientation *= Quaternion.Euler(-90, 0, 0);
+
+        Vector3 rotation = roundToNearest90(wantedOrientation.eulerAngles);
+
+        wantedOrientation = Quaternion.Euler(rotation);
+        rotatePlayer = true;
+        playerRotationTarget = wantedOrientation;
     }
 
     /*
@@ -149,7 +180,7 @@ public class Controller : MonoBehaviour
 
             // Check if rotation not outside the limit
             Vector3 currentRotation = fixVectorValues(cameraContainer.transform.localEulerAngles);
-            currentRotation.x = Mathf.Clamp(currentRotation.x, 0, 90 + rotationAngleLimit);
+            currentRotation.x = Mathf.Clamp(currentRotation.x, 90 - rotationAngleLimit, 90 + rotationAngleLimit);
             cameraContainer.transform.localRotation = Quaternion.Euler(reverseVectorValues(currentRotation));
         }
 
@@ -183,9 +214,17 @@ public class Controller : MonoBehaviour
         if (checkGround(groundVector, 0.5f))
         {
             lastGroundPosition = gameObject.transform.position;
-            movementVector.Set(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            movementVector = Vector3.ClampMagnitude(movementVector, 1);
 
+            float x = Input.GetAxis("Horizontal");
+            float z = Input.GetAxis("Vertical");
+            movementVector.Set(x, 0, z);
+
+            if (x != 0 || z != 0)
+            {
+                // camera is rotated by 90* so we need to remove that
+                movementVector = cameraContainer.transform.localRotation * Quaternion.Euler(-90, 0, 0) * movementVector;
+                movementVector.y = 0;
+            }
 
             if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             {
@@ -201,7 +240,15 @@ public class Controller : MonoBehaviour
         {
             if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 0.5)
             {
-                fixPlayerOrientation();
+                if (Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 3)
+                {
+                    fixPlayerOrientation2();
+                }
+                else
+                {
+                    fixPlayerOrientation();
+                }
+
                 audioSource.Play();
             }
 
@@ -243,7 +290,6 @@ public class Controller : MonoBehaviour
 
         controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
-
         /*
             Rotates the player character model
         */
@@ -254,6 +300,5 @@ public class Controller : MonoBehaviour
             playerModel.transform.localRotation = Quaternion.Lerp(playerModel.transform.localRotation, Quaternion.LookRotation(lookDirection.normalized), Mathf.Clamp01(lerpTime * (1 - smoothing)));
         }
         lerpTime += Time.deltaTime;
-
     }
 }
