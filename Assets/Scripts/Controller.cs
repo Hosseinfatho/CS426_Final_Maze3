@@ -10,6 +10,8 @@ public class Controller : MonoBehaviour
     [SerializeField] GameObject cameraContainer;
     [SerializeField] float playerSpeed;
     [SerializeField] float mouseSensitivity;
+    [SerializeField] float mouseWheelSensitivity;
+    [SerializeField] float cameraSnapBackSpeed;
 
     // To be removed later:
     [SerializeField] TMP_Text debugTextField;
@@ -20,9 +22,13 @@ public class Controller : MonoBehaviour
     Vector3 movementVector;
     Vector3 lastGroundPosition; // last position when we were touching ground
     GameObject mainCamera;
-    GameObject cameraTopPlane;
     Animator playerAnimator;
-    AudioSource jumpSound;
+    AudioSource audioSource;
+    bool snapBackCamera = false; //if set to true, camera will center around the player, when done it will be set to false
+
+    // Used to animate the player rotation
+    bool rotatePlayer = false;
+    Quaternion playerRotationTarget;
 
     float playerGravity = -2f;
     float lerpTime = 0;
@@ -38,7 +44,12 @@ public class Controller : MonoBehaviour
 
     private void testButtonPressed()
     {
-        fixPlayerRotation();
+
+    }
+
+    private void log(string msg)
+    {
+        debugTextField.text += msg + "\n";
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -64,9 +75,8 @@ public class Controller : MonoBehaviour
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
         mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
-        cameraTopPlane = FindChildWithTag(cameraContainer, "CameraTopPlane");
         playerAnimator = GetComponentInChildren<Animator>();
-        jumpSound = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     /*
@@ -90,79 +100,33 @@ public class Controller : MonoBehaviour
 
             if (checkGround(rotatedAngle * Vector3.down))
             {
-                gameObject.transform.rotation = rotatedAngle;
+                playerRotationTarget = rotatedAngle;
+                rotatePlayer = true;
                 return;
             }
         }
     }
 
-    private bool cameraInSight()
+    /*
+        Quaterion.Euler returns positive values, so for -10* of rotation it will return 350.
+        Sometimes that's not what I want, so this function should help to solve that.
+        reverseVectorValues reverses that.
+        Using those function to clamp the rotation
+    */
+    Vector3 fixVectorValues(Vector3 eulerAngles)
     {
-        RaycastHit hit;
-
-        if (Physics.Raycast(mainCamera.transform.position, gameObject.transform.position - mainCamera.transform.position, out hit, 100))
-        {
-            return hit.collider.tag == "Player";
-        }
-
-        return false;
+        eulerAngles.x = (eulerAngles.x > 180) ? eulerAngles.x - 360 : eulerAngles.x;
+        eulerAngles.y = (eulerAngles.y > 180) ? eulerAngles.y - 360 : eulerAngles.y;
+        eulerAngles.z = (eulerAngles.z > 180) ? eulerAngles.z - 360 : eulerAngles.z;
+        return eulerAngles;
     }
-
-    // This is still broken
-    private void fixPlayerRotation()
+    Vector3 reverseVectorValues(Vector3 eulerAngles)
     {
-        if (!cameraInSight()) return;
-
-        Quaternion lookRot = Quaternion.LookRotation((cameraTopPlane.transform.position - gameObject.transform.position).normalized, getPlayerUpVector());
-        gameObject.transform.rotation = Quaternion.Euler(_roundVector(lookRot.eulerAngles));
+        eulerAngles.x = (eulerAngles.x < 0) ? eulerAngles.x + 360 : eulerAngles.x;
+        eulerAngles.y = (eulerAngles.y < 0) ? eulerAngles.y + 360 : eulerAngles.y;
+        eulerAngles.z = (eulerAngles.z < 0) ? eulerAngles.z + 360 : eulerAngles.z;
+        return eulerAngles;
     }
-
-
-
-
-    // Rounds the given number to the closest right angle value (so 44* is rounded to 0, and 46* rounded to 90)
-    private float _round(float value)
-    {
-        float sign = 1;
-        if (value < 0) sign = -1;
-
-        float mult = 0;
-
-        while (Math.Abs(value) >= 45)
-        {
-            mult++;
-            value -= 90 * sign;
-        }
-
-        return 90 * mult * sign;
-    }
-
-    private Vector3 _roundVector(Vector3 vect)
-    {
-        vect.Set(_round(vect.x), _round(vect.y), _round(vect.z));
-        return vect;
-    }
-
-    // 
-    private Vector3 _normalizedMaxVector(Vector3 vect)
-    {
-        float max = vect.x;
-
-        if (Math.Abs(vect.y) > Math.Abs(max)) max = vect.y;
-        if (Math.Abs(vect.z) > Math.Abs(max)) max = vect.z;
-
-        if (vect.x != max) vect.x = 0;
-        if (vect.y != max) vect.y = 0;
-        if (vect.z != max) vect.z = 0;
-
-        return vect.normalized;
-    }
-
-    private Vector3 getPlayerUpVector()
-    {
-        return _normalizedMaxVector(gameObject.transform.position);
-    }
-
 
     void Update()
     {
@@ -172,17 +136,43 @@ public class Controller : MonoBehaviour
         Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
 
         // On mouse left click / hold, rotate the camera around the cube
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !snapBackCamera)
         {
-            cameraContainer.transform.Rotate(Input.GetAxis("Mouse Y") * -mouseSensitivity, Input.GetAxis("Mouse X") * mouseSensitivity, 0);
+            float rotationAngleLimit = 90f;
+
+            // Calculate the rotation based on mouse input
+            float mouseY = Input.GetAxis("Mouse Y") * -mouseSensitivity;
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+
+            // Apply rotation to the camera container
+            cameraContainer.transform.Rotate(mouseY, mouseX, 0);
+
+            // Check if rotation not outside the limit
+            Vector3 currentRotation = fixVectorValues(cameraContainer.transform.localEulerAngles);
+            currentRotation.x = Mathf.Clamp(currentRotation.x, 0, 90 + rotationAngleLimit);
+            cameraContainer.transform.localRotation = Quaternion.Euler(reverseVectorValues(currentRotation));
         }
 
         // On mouse right click, center the camera on the player
         if (Input.GetMouseButtonDown(1))
         {
-            cameraContainer.transform.position = groundVector * -1;
-            cameraContainer.transform.rotation = gameObject.transform.rotation;
-            cameraContainer.transform.LookAt(Vector3.zero);
+            snapBackCamera = true;
+        }
+        if (snapBackCamera)
+        {
+            // Using quaternions because of occasional gimbal lock (endless spinning)
+            Quaternion currentRotation = cameraContainer.transform.localRotation;
+            Quaternion targetRotation = Quaternion.Euler(Vector3.right * 90);
+
+            if (Quaternion.Angle(currentRotation, targetRotation) < 2)
+            {
+                snapBackCamera = false;
+                cameraContainer.transform.localRotation = targetRotation;
+            }
+            else
+            {
+                cameraContainer.transform.localRotation = Quaternion.Lerp(currentRotation, targetRotation, Time.deltaTime * cameraSnapBackSpeed);
+            }
         }
 
         /*
@@ -209,16 +199,32 @@ public class Controller : MonoBehaviour
         }
         else
         {
-            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 1)
+            if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 0.5)
             {
                 fixPlayerOrientation();
-                jumpSound.Play();
-                //fixPlayerRotation();
+                audioSource.Play();
             }
 
             // this moves the player down towards the face - gravity
             movementVector.y += playerGravity * Time.deltaTime;
         }
+
+        /*
+            If player doesn't touch ground and requires rotation
+        */
+        if (rotatePlayer)
+        {
+            if (Quaternion.Angle(gameObject.transform.rotation, playerRotationTarget) < 3)
+            {
+                gameObject.transform.rotation = playerRotationTarget;
+                rotatePlayer = false;
+            }
+            else
+            {
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, playerRotationTarget, Time.deltaTime * 10);
+            }
+        }
+
 
         /*
             Mouse wheel for camera zooming in / out
@@ -227,9 +233,9 @@ public class Controller : MonoBehaviour
         if (mouseWheel != 0)
         {
             Vector3 position = mainCamera.transform.localPosition;
-            position.z += mouseWheel * 15;
+            position.z += mouseWheel * mouseWheelSensitivity;
 
-            if (position.z <= -20 && position.z >= -50)
+            if (position.z <= -30 && position.z >= -120)
             {
                 mainCamera.transform.localPosition = position;
             }
@@ -237,6 +243,10 @@ public class Controller : MonoBehaviour
 
         controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
 
+
+        /*
+            Rotates the player character model
+        */
         Vector3 lookDirection = movementVector.normalized;
         lookDirection.y = 0;
         if (lookDirection != Vector3.zero)
