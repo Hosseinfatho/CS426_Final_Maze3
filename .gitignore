@@ -73,3 +73,7 @@ crashlytics-build.properties
 
 # Misc
 .mono
+**/*.zip
+
+# Output
+Alpha_Output
