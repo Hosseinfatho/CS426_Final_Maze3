@@ -1,18 +1,18 @@
+
 using Demo.Enemy;
 using Demo.FSM;
 using UnityEngine;
 using UnityEngine.AI;
-
 namespace Demo.MyFSM
 {
-    [CreateAssetMenu(menuName = "FSM/Actions/Patrol")]
-    public class PatrolAction : FSMAction
+    [CreateAssetMenu(menuName = "FSM/Decisions/Location Reached")]
+    public class LocationReachedDecision : Decision
     {
-        public override void Execute(BaseStateMachine stateMachine)
+        public override bool Decide(BaseStateMachine stateMachine)
         {
             var navMeshAgent = stateMachine.GetComponent<NavMeshAgent>();
             var patrolPoints = stateMachine.GetComponent<PatrolPoints>();
-            navMeshAgent.SetDestination(patrolPoints.GetNext().position);
+            return patrolPoints.HasReached(navMeshAgent);
         }
     }
 }

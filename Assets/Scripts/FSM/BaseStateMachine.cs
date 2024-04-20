@@ -33,6 +33,17 @@ namespace Demo.FSM
             }
             return component;
         }
+        public new T GetComponentInChildren<T>() where T : Component
+        {
+            if(_cachedComponents.ContainsKey(typeof(T)))
+                return _cachedComponents[typeof(T)] as T;
 
+            var component = base.GetComponentInChildren<T>();
+            if(component != null)
+            {
+                _cachedComponents.Add(typeof(T), component);
+            }
+            return component;
+        }
     }
 }
