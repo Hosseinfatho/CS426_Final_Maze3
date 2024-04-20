@@ -22,7 +22,7 @@ public class Controller : MonoBehaviour
     GameObject mainCamera;
     GameObject cameraTopPlane;
     Animator playerAnimator;
-    AudioSource audio;
+    AudioSource jumpSound;
 
     float playerGravity = -2f;
     float lerpTime = 0;
@@ -66,7 +66,7 @@ public class Controller : MonoBehaviour
         mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
         cameraTopPlane = FindChildWithTag(cameraContainer, "CameraTopPlane");
         playerAnimator = GetComponentInChildren<Animator>();
-        audio = GetComponent<AudioSource>();
+        jumpSound = GetComponent<AudioSource>();
     }
 
     /*
@@ -212,7 +212,7 @@ public class Controller : MonoBehaviour
             if (!checkGround(groundVector) && Vector3.Distance(lastGroundPosition, gameObject.transform.position) > 1)
             {
                 fixPlayerOrientation();
-                audio.Play();
+                jumpSound.Play();
                 //fixPlayerRotation();
             }
 
