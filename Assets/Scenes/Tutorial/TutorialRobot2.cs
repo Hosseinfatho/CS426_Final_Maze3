@@ -4,7 +4,8 @@ using UnityEngine;
 public class TutorialRobot2 : MonoBehaviour
 {
     [SerializeField] GameObject player;
-    GameObject cloudCanvas;
+    Canvas cloudCanvas;
+    AudioSource audioSource;
 
     /*
             Text cloud stuff
@@ -23,13 +24,13 @@ public class TutorialRobot2 : MonoBehaviour
         cloudTextTargetIndex = 0;
         cloudTextTargetIndexLength = newText.Length;
         cloudEnabled = true;
-        cloudCanvas.SetActive(true);
+        cloudCanvas.enabled = true;
         lastCloudUpdate = Time.fixedTime;
     }
     void clearCloud()
     {
         cloudEnabled = false;
-        cloudCanvas.SetActive(false);
+        cloudCanvas.enabled = false;
     }
     bool isCloudDonePrinting()
     {
@@ -38,10 +39,10 @@ public class TutorialRobot2 : MonoBehaviour
 
     void Start()
     {
-        cloudCanvas = GameObject.Find("Canvas");
+        audioSource = GetComponent<AudioSource>();
+        cloudCanvas = GetComponentInChildren<Canvas>();
         cloudText = GetComponentInChildren<TMP_Text>();
-        cloudCanvas.SetActive(false);
-        cloudEnabled = false;
+        clearCloud();
         lastModeUpdate = -3; //so it starts printing right away
     }
 
@@ -51,7 +52,7 @@ public class TutorialRobot2 : MonoBehaviour
     bool isPlayerClose(float distance)
     {
         RaycastHit hit;
-        Vector3 offset = Vector3.left * 3;
+        Vector3 offset = Vector3.up * 3;
         if (Physics.Raycast(gameObject.transform.position + offset, player.transform.position - (gameObject.transform.position + offset), out hit, distance))
         {
             return hit.transform == player.transform;
@@ -68,20 +69,38 @@ public class TutorialRobot2 : MonoBehaviour
     float lastModeUpdate = 0;
 
 
-    string[] mode0Text = { "Hello PLAYER_CANDIDATE_7465.", "I see TUTORIAL-BOT-8TWNR3 V3 managed to do its job for once.", "Or we actually got a CADET worth something." };
+    string[] mode0Text = {
+                "Hello PLAYER_CANDIDATE_7465.",
+                "I see TUTORIAL-BOT-8TWNR3 V3 managed to do its job for once.",
+                "Or we actually got a CADET worth something."
+            };
     int mode0TextIndex = 0;
 
-    string[] mode1Text = { "Go UP if you want to learn about basic enemies.", "Go LEFT if you want to learn about the story", "Press ESC and go to MAIN MENU if you're done." };
+    string[] mode1Text = {
+                "Go UP if you want to learn about basic enemies.",
+                "Go LEFT if you want to learn about the story",
+                "Remember to press right mouse button if you're confused which way is left",
+                "Press ESC and go to MAIN MENU if you're done."
+            };
     int mode1TextIndex = 0;
 
     void Update()
     {
+        bool skipCloudDelay = Input.GetKey(KeyCode.E);
+
         // If needed, it adds characters to the cloud, so it appears animated.
-        if (cloudEnabled && cloudTextTargetIndex != cloudTextTargetIndexLength && Time.fixedTime - lastCloudUpdate > cloudUpdateDelay)
+        if (cloudEnabled && cloudTextTargetIndex != cloudTextTargetIndexLength && (Time.fixedTime - lastCloudUpdate > cloudUpdateDelay || skipCloudDelay))
         {
             cloudText.text += cloudTextTarget.Substring(cloudTextTargetIndex, 1);
             cloudTextTargetIndex++;
             lastCloudUpdate = Time.fixedTime;
+
+            if (!audioSource.isPlaying)
+                audioSource.Play();
+        }
+        else if (audioSource.isPlaying && cloudTextTargetIndex == cloudTextTargetIndexLength)
+        {
+            audioSource.Stop();
         }
 
 
@@ -97,8 +116,7 @@ public class TutorialRobot2 : MonoBehaviour
             {
                 if (!isPlayerClose(5))
                 {
-                    lastModeUpdate = Time.fixedTime;
-
+                    lastModeUpdate = Time.fixedTime - 4.5f; //so the delay is less than during normal conversation
                 }
                 else
                 {

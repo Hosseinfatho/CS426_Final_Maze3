@@ -69,19 +69,51 @@ public class TutorialRobot1 : MonoBehaviour
     float lastModeUpdate = 0;
 
 
-    string[] mode0Text = { "Oh hey buddy, come over here for a sec.", "(You can use WASD to move)", "Come quick, gotta tell you what's going on." };
+    string[] mode0Text = {
+                            "Oh hey buddy, come over here for a sec.",
+                            "(You can use WASD to move)",
+                            "Come quick, gotta tell you what's going on.",
+                            "Like really close, don't want to yell."
+                        };
     int mode0TextIndex = 0;
 
-    string[] mode1Text = { "Good. You know the basics.", "My name is TUTORIAL-BOT-8TWNR3 V3", "But my friends just call me Greg.", "Anyways, I'm gonna tell you a little bit about the controls.", "You already know how to move", "You can rotate the camera using the mouse", "And zoom in and out using mouse wheel", "If you didn't notice, this world is a cube", "And you can move over the edge as well.", "So practice that, and go left to meet my best buddy Tom", "(also remind him that he owes me $5)" };
+    string[] mode1Text = {
+                            "Good.",
+                            "My name is TUTORIAL-BOT-8TWNR3 V3",
+                            "But my friends just call me Greg.",
+                            "Anyways, I'm gonna tell you a little bit about the controls.",
+                            "You already know how to move",
+                            "If I'm speaking too slow, hold E",
+                            "You can rotate the camera using the mouse",
+                            "And zoom in and out using mouse wheel",
+                            "And re-center the camera using right mouse button.",
+                            "If you didn't notice, this world is a cube",
+                            "And you can move over the edge as well.",
+                            "So practice that, and go left to meet my best buddy Tom",
+                            "(also remind him that he owes me $5)"
+                        };
     int mode1TextIndex = 1; // 0 is displayed within mode 0
 
-    string[] mode2Text = { "Just go left until you come over the edge", "Tom will take over from now", "He's gonna explain what we're doing here" };
+    string[] mode2Text = {
+                            "Just go left until you come over the edge",
+                            "Tom will take over from now",
+                            "He's gonna explain what we're doing here",
+                            "(I'm done with my part)"
+                        };
     int mode2TextIndex = 100; //so it doesn't start printing right away
+
+    string[] mode1Error = {
+                            "Hey I wasn't done yet.",
+                            "Oh you're back. Where was I..."
+    };
 
     void Update()
     {
+        // Used to ship delay
+        bool skipCloudDelay = Input.GetKey(KeyCode.E);
+
         // If needed, it adds characters to the cloud, so it appears animated.
-        if (cloudEnabled && cloudTextTargetIndex != cloudTextTargetIndexLength && Time.fixedTime - lastCloudUpdate > cloudUpdateDelay)
+        if (cloudEnabled && cloudTextTargetIndex != cloudTextTargetIndexLength && (Time.fixedTime - lastCloudUpdate > cloudUpdateDelay || skipCloudDelay))
         {
             cloudText.text += cloudTextTarget.Substring(cloudTextTargetIndex, 1);
             cloudTextTargetIndex++;
@@ -137,15 +169,42 @@ public class TutorialRobot1 : MonoBehaviour
             }
             else if (Time.fixedTime - lastModeUpdate > 2)
             {
-                setCloudText(mode1Text[mode1TextIndex]);
-                lastModeUpdate = Time.fixedTime;
-
-                mode1TextIndex++;
-                if (mode1TextIndex >= mode1Text.Length)
+                if (isPlayerClose(6))
                 {
-                    mode = 2;
+                    if (cloudTextTarget == mode1Error[0])
+                    {
+                        setCloudText(mode1Error[1]);
+                        lastModeUpdate = Time.fixedTime;
+                    }
+                    else
+                    {
+                        setCloudText(mode1Text[mode1TextIndex]);
+                        lastModeUpdate = Time.fixedTime;
+
+                        mode1TextIndex++;
+                        if (mode1TextIndex >= mode1Text.Length)
+                        {
+                            mode = 2;
+                            lastModeUpdate = Time.fixedTime;
+                        }
+                    }
+
+
+
+                }
+                else
+                {
+                    if (cloudTextTarget != mode1Error[0])
+                        setCloudText(mode1Error[0]);
+                    else
+                    {
+                        clearCloud();
+                    }
+
                     lastModeUpdate = Time.fixedTime;
                 }
+
+
             }
         }
         else if (mode == 2)
