@@ -9,7 +9,18 @@ namespace Demo.MyFSM
         public override bool Decide(BaseStateMachine stateMachine)
         {
             var payloadTransfer = stateMachine.GetComponent<PayloadTransfer>();
-            return payloadTransfer.AnimationComplete();
+            bool animComplete = payloadTransfer.AnimationComplete();
+
+            if (animComplete)
+            {
+                Debug.Log("Animation complete!");
+            }
+            else
+            {
+                Debug.Log("Animation not complete");
+            }
+
+            return animComplete;
         }
     }
 }

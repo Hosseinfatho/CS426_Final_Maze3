@@ -12,6 +12,7 @@ namespace Demo.MyFSM
         {
             var navMeshAgent = stateMachine.GetComponent<NavMeshAgent>();
             var patrolPoints = stateMachine.GetComponent<PatrolPoints>();
+
             return patrolPoints.HasReached(navMeshAgent);
         }
     }

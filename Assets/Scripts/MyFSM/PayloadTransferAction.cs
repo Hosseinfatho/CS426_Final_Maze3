@@ -11,11 +11,18 @@ namespace Demo.MyFSM
     {
         public override void Execute(BaseStateMachine stateMachine)
         {
+            // Debug.Log("Executing payload transfer action!");
+
             var animator = stateMachine.GetComponentInChildren<Animator>();
             var payloadTransfer = stateMachine.GetComponent<PayloadTransfer>();
             if (!payloadTransfer.AnimationStarted())
             {
+                Debug.Log("Starting coroutine for payload transfer animation...");
                 stateMachine.StartCoroutine(payloadTransfer.AnimateAndWait(animator));
+            }
+            else
+            {
+                // Debug.Log("Animation already started!");
             }
         }
     }

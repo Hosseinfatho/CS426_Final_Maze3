@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Demo.Enemy;
 using Demo.FSM;
@@ -14,14 +15,21 @@ namespace Demo.Enemy
         {
             animationStarted = true;
             transferComplete = false;
+            Debug.Log("Setting flags: animationStarted = true, transferComplete = false");
+            Debug.Log("Reset trigger Walking, set trigger BoxDown");
             animator.ResetTrigger("Walking");
             animator.SetTrigger("BoxDown");
             float boxDownLength = GetAnimationClipLength(animator, "BoxDown");
+            Debug.Log("Waiting for BoxDown anim to complete...");
             yield return new WaitForSeconds(boxDownLength);
+            Debug.Log("Reset trigger BoxDown, set trigger BoxUp");
+            animator.ResetTrigger("BoxDown");
             animator.SetTrigger("BoxUp");
+            Debug.Log("Waiting for BoxUp animation...");
             float boxUpLength = GetAnimationClipLength(animator, "BoxUp");
             yield return new WaitForSeconds(boxUpLength);
-            Debug.Log("Finished waiting for animations. Going to next waypoint...");
+            Debug.Log("Finished waiting for animations.");
+            Debug.Log("Setting flags: transferComplete = true, animationStarted = false");
             transferComplete = true;
             animationStarted = false;
         }
@@ -33,7 +41,7 @@ namespace Demo.Enemy
             {
                 if (clips[i].name == clipName)
                 {
-                    Debug.Log("Returning nonzero clip length");
+                    // Debug.Log("Returning nonzero clip length");
                     return clips[i].length;
                 }
             }
