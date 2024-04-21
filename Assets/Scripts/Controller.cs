@@ -167,9 +167,10 @@ public class Controller : MonoBehaviour
         Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
 
         // On mouse left click / hold, rotate the camera around the cube
-        if (Input.GetMouseButton(0) && !snapBackCamera)
+        if (Input.GetMouseButton(0))
         {
             float rotationAngleLimit = 90f;
+            snapBackCamera = false;
 
             // Calculate the rotation based on mouse input
             float mouseY = Input.GetAxis("Mouse Y") * -mouseSensitivity;
@@ -195,7 +196,7 @@ public class Controller : MonoBehaviour
             Quaternion currentRotation = cameraContainer.transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(Vector3.right * 90);
 
-            if (Quaternion.Angle(currentRotation, targetRotation) < 2)
+            if (Quaternion.Angle(currentRotation, targetRotation) < 1)
             {
                 snapBackCamera = false;
                 cameraContainer.transform.localRotation = targetRotation;
