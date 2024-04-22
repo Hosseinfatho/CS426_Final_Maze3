@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,13 +10,6 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] Transform[] waypoints;
     [SerializeField] float viewDistance;
     [SerializeField] GameObject player;
-    [SerializeField] Material glowMaterial;
-    [SerializeField] GameObject objectToChangeMaterial;
-    [SerializeField] bool changeMaterialOnPlayerDetect;
-
-    Renderer objectToChangeMaterialRenderer;
-    float enemyBlinkTime = 0;
-    Material standardMaterial;
 
     Animator enemyAnimator;
     NavMeshAgent agent;
@@ -31,9 +23,6 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
-        objectToChangeMaterialRenderer = objectToChangeMaterial.GetComponent<Renderer>();
-        standardMaterial = objectToChangeMaterialRenderer.material;
-
         agent = GetComponent<NavMeshAgent>();
         waypointIndex = 0;
         lastPlayerPosition = Vector3.zero;
@@ -60,20 +49,6 @@ public class EnemyAI : MonoBehaviour
                 agent.SetDestination(lastPlayerPosition);
                 wasPlayerSeen = true;
                 lastPlayerSeenTime = 0;
-
-                if (changeMaterialOnPlayerDetect)
-                {
-                    if (Time.fixedTime - enemyBlinkTime > 0.8)
-                    {
-                        if (objectToChangeMaterialRenderer.material != standardMaterial)
-                            objectToChangeMaterialRenderer.material = standardMaterial;
-                        else
-                            objectToChangeMaterialRenderer.material = glowMaterial;
-
-                        enemyBlinkTime = Time.fixedTime;
-                    }
-
-                }
             }
             // if player no longer in sight, go to the last player's known location
             else if (wasPlayerSeen)
@@ -90,9 +65,6 @@ public class EnemyAI : MonoBehaviour
                         wasPlayerSeen = false;
                     }
                 }
-
-                if (changeMaterialOnPlayerDetect && objectToChangeMaterialRenderer.material != standardMaterial)
-                    objectToChangeMaterialRenderer.material = standardMaterial;
             }
             // otherwise, follow waypoints
             else
@@ -101,9 +73,6 @@ public class EnemyAI : MonoBehaviour
 
                 if (Vector3.Distance(transform.position, target) < 1)
                     nextWaypoint();
-
-                if (changeMaterialOnPlayerDetect && objectToChangeMaterialRenderer.material != standardMaterial)
-                    objectToChangeMaterialRenderer.material = standardMaterial;
 
                 UpdateDestination();
             }
