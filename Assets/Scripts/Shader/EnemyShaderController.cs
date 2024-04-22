@@ -4,38 +4,50 @@ using UnityEngine;
 
 public class EnemyShaderController : MonoBehaviour
 {
-    public GameObject player; // Reference to the player GameObject
-    public float activationRange = 5f; // Range within which the player can activate the shader change
-    public Shader reflectionShader; // Reflection shader for the enemy
-    public Shader toonShader; // Toon shader for the enemy
+    public float changeInterval = 5f; // Time interval for changing materials
+    public Material reflectiveMaterial; // Material with the reflective shader
+    public Material toonMaterial; // Material with the toon shader
 
     private Renderer enemyRenderer; // Reference to the enemy's renderer
-    private Shader originalShader; // Original shader of the enemy
+    private Material originalMaterial; // Original material of the enemy
+    private bool isToonMaterialActive = false; // Flag to track which material is currently active
+    private float timeSinceLastChange = 0f; // Time elapsed since the last material change
 
     void Start()
     {
-        // Find the player GameObject by tag
-        player = GameObject.FindGameObjectWithTag("Player");
-
         // Get the renderer component attached to the enemy
         enemyRenderer = GetComponent<Renderer>();
 
-        // Store the original shader
-        originalShader = enemyRenderer.material.shader;
+        // Store the original material
+        originalMaterial = enemyRenderer.material;
+
+        // Start with the reflective material
+        enemyRenderer.material = reflectiveMaterial;
     }
 
     void Update()
     {
-        // Check if the player is nearby
-        if (Vector3.Distance(player.transform.position, transform.position) <= activationRange)
+        // Increment time since last change
+        timeSinceLastChange += Time.deltaTime;
+
+        // Check if it's time to change material
+        if (timeSinceLastChange >= changeInterval)
         {
-            // Change the shader to toon shader
-            enemyRenderer.material.shader = toonShader;
-        }
-        else
-        {
-            // Revert to the original shader
-            enemyRenderer.material.shader = originalShader;
+            // Toggle between reflective and toon materials
+            if (isToonMaterialActive)
+            {
+                enemyRenderer.material = reflectiveMaterial;
+                isToonMaterialActive = false;
+            }
+            else
+            {
+                enemyRenderer.material = toonMaterial;
+                isToonMaterialActive = true;
+            }
+
+            // Reset time since last change
+            timeSinceLastChange = 0f;
         }
     }
 }
+

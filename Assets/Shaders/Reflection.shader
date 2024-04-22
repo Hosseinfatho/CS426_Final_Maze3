@@ -1,33 +1,39 @@
-Shader "Custom/ReflectiveShader"
+using UnityEngine;
+
+public class EnemyShaderController : MonoBehaviour
 {
-    Properties
+    public GameObject player; // Reference to the player GameObject
+    public float activationRange = 5f; // Range within which the player can activate the shader change
+    public Shader reflectionShader; // Reflection shader for the enemy
+    public Shader toonShader; // Toon shader for the enemy
+
+    private Renderer enemyRenderer; // Reference to the enemy's renderer
+    private Shader originalShader; // Original shader of the enemy
+
+    void Start()
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        // Find the player GameObject by tag
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        // Get the renderer component attached to the enemy
+        enemyRenderer = GetComponent<Renderer>();
+
+        // Store the original shader
+        originalShader = enemyRenderer.material.shader;
     }
-    SubShader
+
+    void Update()
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
-        
-        CGPROGRAM
-        #pragma surface surf Standard fullforwardshadows
-        
-        struct Input
+        // Check if the player is nearby
+        if (Vector3.Distance(player.transform.position, transform.position) <= activationRange)
         {
-            float2 uv_MainTex;
-        };
-        
-        sampler2D _MainTex;
-        
-        void surf (Input IN, inout SurfaceOutputStandard o)
-        {
-            half4 c = tex2D(_MainTex, IN.uv_MainTex);
-            o.Albedo = c.rgb;
-            o.Alpha = c.a;
-            o.Metallic = 1.0;
-            o.Smoothness = 1.0;
+            // Change the shader to reflection shader
+            enemyRenderer.material.shader = reflectionShader;
         }
-        ENDCG
+        else
+        {
+            // Revert to the original shader
+            enemyRenderer.material.shader = originalShader;
+        }
     }
-    FallBack "Standard"
 }
