@@ -89,7 +89,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Returns true/false depending if player character is in line of sight of the enemy
-    bool playerInSight()
+    public bool playerInSight()
     {
         RaycastHit hit;
 
