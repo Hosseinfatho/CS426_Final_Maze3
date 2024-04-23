@@ -424,7 +424,7 @@ public class Controller : MonoBehaviour
             float z = 0;
 
             float x_raw = Input.GetAxisRaw("Horizontal");
-            float y_raw = Input.GetAxisRaw("Vertical");
+            float z_raw = Input.GetAxisRaw("Vertical");
 
             // All input should be done here
             // Because if here, then player alive and touching ground
@@ -441,8 +441,14 @@ public class Controller : MonoBehaviour
                 eKey.SetActive(boxLocationIndex != -1);
 
                 // if trying to pick up / drop off something
-                if (x_raw == 0 && y_raw == 0 && Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E))
                 {
+                    if ((playerMode == 0 || playerMode == 2) && boxLocationIndex > 0)
+                    {
+                        x = 0;
+                        z = 0;
+                    }
+
                     // 0 - no box, can walk, can pickup
                     if (playerMode == 0)
                     {
@@ -489,7 +495,7 @@ public class Controller : MonoBehaviour
                 movementVector.y = 0;
             }
 
-            if ((x_raw != 0 || y_raw != 0) && (playerMode == 0 || playerMode == 2))
+            if ((x_raw != 0 || z_raw != 0) && (playerMode == 0 || playerMode == 2))
             {
                 playerAnimator.SetTrigger("Walking");
             }

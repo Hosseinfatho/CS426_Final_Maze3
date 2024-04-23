@@ -75,7 +75,7 @@ public class EnemyTransportWorker : MonoBehaviour
 
     public bool isTargetDestroyed()
     {
-        return smoke.active;
+        return smoke.activeInHierarchy;
     }
 
     void setDestination(Transform newDestination)
