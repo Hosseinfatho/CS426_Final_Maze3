@@ -84,12 +84,13 @@ public class Controller : MonoBehaviour
 
     bool isBoxInProximity(GameObject[] locations)
     {
-        foreach (GameObject boxLocation in locations)
+        for (int i = 0; i < locations.Length; i++)
         {
-            if (Vector3.Distance(gameObject.transform.position, boxLocation.transform.position) < 1)
+            if (Vector3.Distance(gameObject.transform.position, locations[i].transform.position) < 1)
             {
                 //set so player's own box look like one from this pickup location
-                playerBox.GetComponent<Renderer>().material.name = boxLocation.GetComponent<Renderer>().material.name;
+                playerBox.GetComponent<Renderer>().material = boxesUsedAtThisLocation[i].GetComponent<Renderer>().material;
+                Debug.Log("Assigned material: " + playerBox.GetComponent<Renderer>().material.name);
                 return true;
             }
         }
