@@ -34,7 +34,7 @@ public class Controller : MonoBehaviour
 
     private void resetPos()
     {
-        gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+
     }
 
     private void testButtonPressed()
