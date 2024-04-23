@@ -182,12 +182,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b8db52c707a0c48aec6597bcad4705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerModel: {fileID: 826780285648470873}
-  cameraContainer: {fileID: 6993107290200636888}
   playerSpeed: 3
   mouseSensitivity: 2
   mouseWheelSensitivity: 50
   cameraSnapBackSpeed: 3
+  transportEnemies: []
   debugTextField: {fileID: 0}
   resetButton: {fileID: 0}
   testButton: {fileID: 0}
@@ -299,7 +298,7 @@ GameObject:
   - component: {fileID: 5132585494409182169}
   - component: {fileID: 6771474914008860661}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -420,9 +419,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4063463695910664464}
     m_Modifications:
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[6]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[7]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[8]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[9]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[10]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647205239665466743, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[11]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1756607881411261371, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f281d243859da134bb934274dc272c12, type: 2}
     - target: {fileID: 2407931468550747273, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
       propertyPath: m_Name
-      value: Robot_Orange
+      value: Robot
       objectReference: {fileID: 0}
     - target: {fileID: 3035813473977364019, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
       propertyPath: m_LocalPosition.x
@@ -463,6 +490,30 @@ PrefabInstance:
     - target: {fileID: 3035813473977364019, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[6]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[7]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[8]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[9]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[10]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767462420724905596, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+      propertyPath: m_Bones.Array.data[11]
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6237966073005096621, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
       propertyPath: m_LocalRotation.w
@@ -521,7 +572,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1806326220926495060, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
+    - {fileID: 7870805532045406854, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2c76287bc28a04a95707dd2453a001, type: 3}
