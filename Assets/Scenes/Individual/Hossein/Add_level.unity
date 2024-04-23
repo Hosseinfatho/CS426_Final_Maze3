@@ -4328,6 +4328,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1012917128}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1018596106 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8718778070296752549, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
+  m_PrefabInstance: {fileID: 5043718904177582090}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1024320347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5184,6 +5189,11 @@ MeshFilter:
 --- !u!1 &1401560609 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2668004344948441148, guid: fdc5116603d43ce409374ddbaeb4741a, type: 3}
+  m_PrefabInstance: {fileID: 245144617}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1401560611 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 6601786124865698804, guid: fdc5116603d43ce409374ddbaeb4741a, type: 3}
   m_PrefabInstance: {fileID: 245144617}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1401560613 stripped
@@ -7436,7 +7446,7 @@ MonoBehaviour:
   activationRange: 4
   flickerIntensity: 3
   flickerSpeed: 5
-  alarmSound: {fileID: 8300000, guid: c8e329e0d90d09a4fbf078972f8fe6f6, type: 3}
+  alarmSound: {fileID: 8300000, guid: c9baa59658e89b9498d3e3823145d13a, type: 3}
   alarmVolume: 0.5
 --- !u!82 &1898459622
 AudioSource:
@@ -7494,7 +7504,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.635
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -7534,6 +7544,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1898459624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898459617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d706ed3b0fc6f4087819db6b45d62c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1401560609}
+  enemy: {fileID: 1018596106}
+  spotlight: {fileID: 1898459620}
+  audioSource: {fileID: 1401560611}
+  detectionRange: 5
 --- !u!1 &1929395188
 GameObject:
   m_ObjectHideFlags: 0
@@ -8800,8 +8827,7 @@ PrefabInstance:
       propertyPath: m_PlayOnAwake
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4441732895639782114, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7438405852962695600, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
     m_AddedGameObjects: []
@@ -8818,6 +8844,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9108180971069835750, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1898459622}
+    - targetCorrespondingSourceObject: {fileID: 9108180971069835750, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1898459624}
     - targetCorrespondingSourceObject: {fileID: 1716695359653369696, guid: 7e58fbd5ad318a649b49fcbee7714f7d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5043718904177582096}
