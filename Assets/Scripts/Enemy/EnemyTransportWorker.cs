@@ -13,6 +13,7 @@ public class EnemyTransportWorker : MonoBehaviour
     GameObject playerBox;
     GameObject boxPickUpLocation;
     GameObject boxDropOffLocation;
+    GameObject smoke;
 
     Animator enemyAnimator;
     NavMeshAgent agent;
@@ -49,6 +50,8 @@ public class EnemyTransportWorker : MonoBehaviour
         boxPickUpLocation = transform.parent.Find("PickUpLocation").gameObject;
         boxDropOffLocation = transform.parent.Find("DropOffLocation").gameObject;
         playerBox = transform.Find("Robot/Box").gameObject;
+        smoke = transform.parent.gameObject.transform.Find("DropOffLocation/Smoke").gameObject;
+        smoke.SetActive(false);
 
         // Change all boxes inside the pickup location material to match the one set on robot
         Material wantedMaterial = playerBox.GetComponent<Renderer>().material;
@@ -63,6 +66,11 @@ public class EnemyTransportWorker : MonoBehaviour
 
         // To play audio clips
         pickupSound = GetComponent<AudioSource>();
+    }
+
+    public void targetDestroyed()
+    {
+        smoke.SetActive(true);
     }
 
     void setDestination(Transform newDestination)

@@ -40,6 +40,11 @@ public class Controller : MonoBehaviour
          3 - drop animation playing, can't walk
     */
     int playerMode = 0;
+    int setTargetToDestroy = -1; // if >= 0, target with this ID will be set to be destroyed
+    float setTargetToDestroyTime = 0;
+    float targetDestroyDelay = 3f;
+    int targetsAmount = 0;
+    int targetsDestroyed = 0;
 
 
     //Box locations
@@ -131,6 +136,7 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
+        targetsAmount = transportEnemies.Length;
         controller = gameObject.AddComponent<CharacterController>();
         controller.radius = 1;
         controller.height = 1;
@@ -149,12 +155,11 @@ public class Controller : MonoBehaviour
         playerAnimator.SetTrigger("GoToIdleBoxDown"); // remember to reset it later
 
         // populate the location arrays
-        int enemiesAmount = transportEnemies.Length;
-        pickUpLocations = new GameObject[enemiesAmount];
-        dropOffLocations = new GameObject[enemiesAmount];
-        boxesUsedAtThisLocation = new GameObject[enemiesAmount];
+        pickUpLocations = new GameObject[targetsAmount];
+        dropOffLocations = new GameObject[targetsAmount];
+        boxesUsedAtThisLocation = new GameObject[targetsAmount];
 
-        for (int i = 0; i < enemiesAmount; i++)
+        for (int i = 0; i < targetsAmount; i++)
         {
             GameObject enemyContainer = transportEnemies[i];
 
@@ -254,6 +259,20 @@ public class Controller : MonoBehaviour
     void Update()
     {
         debugTextField.text = "";
+
+        // if specified some target to mark as destroyed, this will execute
+        if (setTargetToDestroy >= 0 && Time.fixedTime - setTargetToDestroyTime > targetDestroyDelay)
+        {
+            transportEnemies[setTargetToDestroy].transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>().targetDestroyed();
+            setTargetToDestroy = -1;
+            targetsDestroyed++;
+
+            // level finished
+            if (targetsDestroyed >= targetsAmount)
+            {
+
+            }
+        }
 
         // Vector that points to the ground according to the current player's rotation (not actual ground vector)
         Vector3 groundVector = gameObject.transform.rotation * Vector3.down;
@@ -373,6 +392,20 @@ public class Controller : MonoBehaviour
                             playerMode = 3;
                             resetAllAnimationTriggers();
                             playerAnimator.SetTrigger("BoxDown");
+
+                            //set target to be destroyed only if material differs
+                            //first 10 letters should be enough to compare
+                            //as unity changes the suffix / adds stuff
+                            string material1Name = playerBox.GetComponent<Renderer>().material.name;
+                            material1Name = material1Name.Substring(0, material1Name.IndexOf(" "));
+                            string material2Name = boxesUsedAtThisLocation[boxLocationIndex].GetComponent<Renderer>().material.name;
+                            material2Name = material2Name.Substring(0, material2Name.IndexOf(" "));
+
+                            if (material1Name != material2Name)
+                            {
+                                setTargetToDestroy = boxLocationIndex;
+                                setTargetToDestroyTime = Time.fixedTime;
+                            }
                         }
                     }
                 }
