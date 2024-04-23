@@ -82,20 +82,19 @@ public class Controller : MonoBehaviour
         }
     }
 
-    bool isBoxInProximity(GameObject[] locations)
+    // returns -1 if not in proximity, returns index of location if in proximity
+    int isBoxInProximity(GameObject[] locations)
     {
         for (int i = 0; i < locations.Length; i++)
         {
             if (Vector3.Distance(gameObject.transform.position, locations[i].transform.position) < 1)
             {
                 //set so player's own box look like one from this pickup location
-                playerBox.GetComponent<Renderer>().material = boxesUsedAtThisLocation[i].GetComponent<Renderer>().material;
-                Debug.Log("Assigned material: " + playerBox.GetComponent<Renderer>().material.name);
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     private void log(string msg)
@@ -148,7 +147,6 @@ public class Controller : MonoBehaviour
         dropOffLocations = new GameObject[enemiesAmount];
         boxesUsedAtThisLocation = new GameObject[enemiesAmount];
 
-        string debug = "Has " + enemiesAmount.ToString() + " enemies.\nLoaded material names from given enemies: \n";
         for (int i = 0; i < enemiesAmount; i++)
         {
             GameObject enemyContainer = transportEnemies[i];
@@ -156,10 +154,7 @@ public class Controller : MonoBehaviour
             pickUpLocations[i] = enemyContainer.transform.Find("PickUpLocation").gameObject;
             dropOffLocations[i] = enemyContainer.transform.Find("DropOffLocation").gameObject;
             boxesUsedAtThisLocation[i] = enemyContainer.transform.Find("EnemyTransportWorker/Robot/Box").gameObject;
-
-            debug += pickUpLocations[i].GetComponent<Renderer>().material.name + "\n";
         }
-        Debug.Log(debug);
     }
 
     /*
@@ -347,16 +342,19 @@ public class Controller : MonoBehaviour
                     // 0 - no box, can walk, can pickup
                     if (playerMode == 0)
                     {
-                        if (isBoxInProximity(pickUpLocations))
+                        int locationIndex = isBoxInProximity(pickUpLocations);
+                        if (locationIndex >= 0)
                         {
                             playerMode = 1;
                             resetAllAnimationTriggers();
                             playerAnimator.SetTrigger("BoxUp");
+                            playerBox.GetComponent<Renderer>().material = boxesUsedAtThisLocation[locationIndex].GetComponent<Renderer>().material;
                         }
                     }
                     else if (playerMode == 2)
                     {
-                        if (isBoxInProximity(dropOffLocations))
+                        int locationIndex = isBoxInProximity(dropOffLocations);
+                        if (locationIndex >= 0)
                         {
                             playerMode = 3;
                             resetAllAnimationTriggers();
