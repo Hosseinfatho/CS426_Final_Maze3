@@ -7,17 +7,19 @@ using UnityEngine.AI;
 public class EnemyTransportWorker : MonoBehaviour
 {
 
-    [SerializeField] Transform boxPickUpLocation;
-    [SerializeField] Transform boxDropOffLocation;
     [SerializeField] float viewDistance;
     [SerializeField] GameObject player;
-    [SerializeField] GameObject myOwnBox;
+
+    GameObject playerBox;
+    GameObject boxPickUpLocation;
+    GameObject boxDropOffLocation;
 
     Animator enemyAnimator;
     NavMeshAgent agent;
     AudioSource pickupSound;
     Vector3 target;
     Vector3 lastPlayerPosition;
+
     bool wasPlayerSeen;
     float lastPlayerSeenTime;
     float waitBeforeResumingAction = 3; //in seconds, how long to idle on last player's position
@@ -43,6 +45,19 @@ public class EnemyTransportWorker : MonoBehaviour
         lastPlayerPosition = Vector3.zero;
         wasPlayerSeen = false;
 
+        // Get required components
+        boxPickUpLocation = transform.parent.Find("PickUpLocation").gameObject;
+        boxDropOffLocation = transform.parent.Find("DropOffLocation").gameObject;
+        playerBox = transform.Find("Robot/Box").gameObject;
+
+        // Change all boxes inside the pickup location material to match the one set on robot
+        Material wantedMaterial = playerBox.GetComponent<Renderer>().material;
+        foreach (Transform box in boxPickUpLocation.transform)
+        {
+            box.gameObject.GetComponent<Renderer>().material = wantedMaterial;
+        }
+        boxDropOffLocation.transform.Find("DropOffBox").gameObject.GetComponent<Renderer>().material = wantedMaterial;
+
         // To set animation triggers
         enemyAnimator = GetComponentInChildren<Animator>();
 
@@ -60,7 +75,7 @@ public class EnemyTransportWorker : MonoBehaviour
 
     public GameObject getMyOwnBox()
     {
-        return myOwnBox;
+        return playerBox;
     }
 
     // Returns true/false depending if player character is in line of sight of the enemy
@@ -126,11 +141,11 @@ public class EnemyTransportWorker : MonoBehaviour
         // if need to go to pickup location
         if (currentAction == 0)
         {
-            setDestination(boxPickUpLocation);
+            setDestination(boxPickUpLocation.transform);
             setAnimation("Walking");
 
             // if reached the pickup
-            if (Vector3.Distance(gameObject.transform.position, boxPickUpLocation.position) < 1)
+            if (Vector3.Distance(gameObject.transform.position, boxPickUpLocation.transform.position) < 1)
             {
                 currentAction = 1;
                 currentActionTime = Time.fixedTime;
@@ -150,7 +165,7 @@ public class EnemyTransportWorker : MonoBehaviour
         {
             if (checkAnimationState("BoxUp"))
             {
-                myOwnBox.SetActive(true);
+                playerBox.SetActive(true);
             }
             else if (!checkAnimationState("Idle"))
             {
@@ -164,11 +179,11 @@ public class EnemyTransportWorker : MonoBehaviour
         // if need to go to destination
         else if (currentAction == 2)
         {
-            setDestination(boxDropOffLocation);
+            setDestination(boxDropOffLocation.transform);
             setAnimation("Walking");
 
             // if reached the pickup
-            if (Vector3.Distance(gameObject.transform.position, boxDropOffLocation.position) < 1)
+            if (Vector3.Distance(gameObject.transform.position, boxDropOffLocation.transform.position) < 1)
             {
                 currentAction = 3;
                 currentActionTime = Time.fixedTime;
@@ -190,7 +205,7 @@ public class EnemyTransportWorker : MonoBehaviour
             // BoxDownDoneState state, unless BoxDownDone is set to true
             if (checkAnimationState("BoxDownDoneState"))
             {
-                myOwnBox.SetActive(false);
+                playerBox.SetActive(false);
                 setAnimation("BoxDownDone");
                 currentActionTime = Time.fixedTime;
             }

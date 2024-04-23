@@ -83,17 +83,20 @@ public class Controller : MonoBehaviour
     }
 
     // returns -1 if not in proximity, returns index of location if in proximity
-    int isBoxInProximity(GameObject[] locations)
+    int isBoxInProximity(GameObject[] locations, float distance = 1.5f)
     {
+        //string debug = "Locations: ";
         for (int i = 0; i < locations.Length; i++)
         {
-            if (Vector3.Distance(gameObject.transform.position, locations[i].transform.position) < 1)
+            float distanceToBoxes = Vector3.Distance(gameObject.transform.position, locations[i].transform.position);
+            //debug += distanceToBoxes.ToString() + ", ";
+            if (distanceToBoxes <= distance)
             {
-                //set so player's own box look like one from this pickup location
                 return i;
             }
         }
 
+        //Debug.Log(debug);
         return -1;
     }
 
@@ -155,6 +158,8 @@ public class Controller : MonoBehaviour
             dropOffLocations[i] = enemyContainer.transform.Find("DropOffLocation").gameObject;
             boxesUsedAtThisLocation[i] = enemyContainer.transform.Find("EnemyTransportWorker/Robot/Box").gameObject;
         }
+
+        Debug.Log("Loading done");
     }
 
     /*
