@@ -27,6 +27,8 @@ public class Controller : MonoBehaviour
     GameObject playerModel;
     GameObject cameraContainer;
 
+    GameObject eKey;
+
 
     bool snapBackCamera = false; //if set to true, camera will center around the player, when done it will be set to false
 
@@ -136,6 +138,8 @@ public class Controller : MonoBehaviour
         testButton.onClick.AddListener(testButtonPressed);
         playerAnimator = transform.Find("RobotModel/Robot").gameObject.GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        eKey = transform.Find("RobotModel/Robot/e_key").gameObject;
+        eKey.SetActive(false);
 
         playerBox = transform.Find("RobotModel/Robot/Box").gameObject;
         playerModel = transform.Find("RobotModel").gameObject;
@@ -341,25 +345,30 @@ public class Controller : MonoBehaviour
                 x = Input.GetAxis("Horizontal");
                 z = Input.GetAxis("Vertical");
 
+                int boxLocationIndex = -1;
+                if (playerMode == 0) boxLocationIndex = isBoxInProximity(pickUpLocations);
+                else if (playerMode == 2) boxLocationIndex = isBoxInProximity(dropOffLocations);
+
+                // if near pickup or dropoff display e key on the player
+                eKey.SetActive(boxLocationIndex != -1);
+
                 // if trying to pick up / drop off something
                 if (x_raw == 0 && y_raw == 0 && Input.GetKeyDown(KeyCode.E))
                 {
                     // 0 - no box, can walk, can pickup
                     if (playerMode == 0)
                     {
-                        int locationIndex = isBoxInProximity(pickUpLocations);
-                        if (locationIndex >= 0)
+                        if (boxLocationIndex >= 0)
                         {
                             playerMode = 1;
                             resetAllAnimationTriggers();
                             playerAnimator.SetTrigger("BoxUp");
-                            playerBox.GetComponent<Renderer>().material = boxesUsedAtThisLocation[locationIndex].GetComponent<Renderer>().material;
+                            playerBox.GetComponent<Renderer>().material = boxesUsedAtThisLocation[boxLocationIndex].GetComponent<Renderer>().material;
                         }
                     }
                     else if (playerMode == 2)
                     {
-                        int locationIndex = isBoxInProximity(dropOffLocations);
-                        if (locationIndex >= 0)
+                        if (boxLocationIndex >= 0)
                         {
                             playerMode = 3;
                             resetAllAnimationTriggers();
