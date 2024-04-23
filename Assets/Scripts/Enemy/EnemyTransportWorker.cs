@@ -58,6 +58,11 @@ public class EnemyTransportWorker : MonoBehaviour
         }
     }
 
+    public GameObject getMyOwnBox()
+    {
+        return myOwnBox;
+    }
+
     // Returns true/false depending if player character is in line of sight of the enemy
     public bool playerInSight()
     {

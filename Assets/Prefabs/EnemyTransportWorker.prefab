@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2899299629440773560}
   m_Layer: 0
   m_Name: EnemyTransportWorker
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -812,7 +812,7 @@ GameObject:
   - component: {fileID: 9084036712672745941}
   - component: {fileID: 8415470993567028100}
   m_Layer: 0
-  m_Name: Robot_Orange
+  m_Name: Robot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -901,8 +901,8 @@ GameObject:
   - component: {fileID: 988269369343068254}
   - component: {fileID: 6767542485393055232}
   m_Layer: 0
-  m_Name: PickupLocation
-  m_TagString: Untagged
+  m_Name: PickUpLocation
+  m_TagString: PickUpLocation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1233,8 +1233,8 @@ GameObject:
   - component: {fileID: 3369008784221283540}
   - component: {fileID: 721519742254197003}
   m_Layer: 0
-  m_Name: DropoffLocation
-  m_TagString: Untagged
+  m_Name: DropOffLocation
+  m_TagString: DropOffLocation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1443,7 +1443,7 @@ GameObject:
   - component: {fileID: 9218760732389337734}
   m_Layer: 0
   m_Name: Box
-  m_TagString: Untagged
+  m_TagString: Box
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

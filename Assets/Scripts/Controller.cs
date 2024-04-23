@@ -4,12 +4,11 @@ using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
-    [SerializeField] GameObject playerModel;
-    [SerializeField] GameObject cameraContainer;
     [SerializeField] float playerSpeed;
     [SerializeField] float mouseSensitivity;
     [SerializeField] float mouseWheelSensitivity;
     [SerializeField] float cameraSnapBackSpeed;
+    [SerializeField] GameObject[] transportEnemies;
 
     // To be removed later:
     [SerializeField] TMP_Text debugTextField;
@@ -22,7 +21,26 @@ public class Controller : MonoBehaviour
     GameObject mainCamera;
     Animator playerAnimator;
     AudioSource audioSource;
+
+    GameObject playerBox;
+    GameObject playerModel;
+    GameObject cameraContainer;
+
+
     bool snapBackCamera = false; //if set to true, camera will center around the player, when done it will be set to false
+
+    /*
+        -1 - player dead
+         0 - no box, can walk, can pickup
+         1 - pickup animation playing, can't walk
+         2 - has box, can walk, can pickup
+         3 - drop animation playing, can't walk
+    */
+    int playerMode = 0;
+
+
+    //Box locations
+    GameObject[] pickUpLocations, dropOffLocations, boxesUsedAtThisLocation;
 
     // Used to animate the player rotation
     bool rotatePlayer = false;
@@ -42,9 +60,25 @@ public class Controller : MonoBehaviour
 
     }
 
+    string _lastAnimation = "BoxUp";
+    void setAnimation(string animation)
+    {
+        if (_lastAnimation == animation) return;
+
+        playerAnimator.ResetTrigger(_lastAnimation);
+        playerAnimator.SetTrigger(animation);
+        _lastAnimation = animation;
+    }
+
     private void log(string msg)
     {
         debugTextField.text += msg + "\n";
+    }
+
+    public void killPlayer()
+    {
+        playerMode = -1;
+
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -69,9 +103,34 @@ public class Controller : MonoBehaviour
         controller.height = 1;
         resetButton.onClick.AddListener(resetPos);
         testButton.onClick.AddListener(testButtonPressed);
-        mainCamera = FindChildWithTag(cameraContainer, "MainCamera");
-        playerAnimator = GetComponentInChildren<Animator>();
+        playerAnimator = transform.Find("RobotModel/Robot").gameObject.GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+
+        playerBox = transform.Find("RobotModel/Robot/Box").gameObject;
+        playerModel = transform.Find("RobotModel").gameObject;
+        cameraContainer = transform.Find("CameraContainer").gameObject;
+        mainCamera = cameraContainer.transform.Find("MainCamera").gameObject;
+        playerBox.SetActive(false);
+        playerAnimator.SetTrigger("GoToIdleBoxDown"); // remember to reset it later
+
+        // populate the location arrays
+        int enemiesAmount = transportEnemies.Length;
+        pickUpLocations = new GameObject[enemiesAmount];
+        dropOffLocations = new GameObject[enemiesAmount];
+        boxesUsedAtThisLocation = new GameObject[enemiesAmount];
+
+        string debug = "Has " + enemiesAmount.ToString() + " enemies.\nLoaded material names from given enemies: \n";
+        for (int i = 0; i < enemiesAmount; i++)
+        {
+            GameObject enemyContainer = transportEnemies[i];
+
+            pickUpLocations[i] = enemyContainer.transform.Find("PickUpLocation").gameObject;
+            dropOffLocations[i] = enemyContainer.transform.Find("DropOffLocation").gameObject;
+            boxesUsedAtThisLocation[i] = enemyContainer.transform.Find("EnemyTransportWorker/Robot/Box").gameObject;
+
+            debug += pickUpLocations[i].GetComponent<Renderer>().material.name + "\n";
+        }
+        Debug.Log(debug);
     }
 
     /*
@@ -216,8 +275,38 @@ public class Controller : MonoBehaviour
         {
             lastGroundPosition = gameObject.transform.position;
 
-            float x = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
+            float x = 0;
+            float z = 0;
+
+            float x_raw = Input.GetAxisRaw("Horizontal");
+            float y_raw = Input.GetAxisRaw("Vertical");
+
+            // All input should be done here
+            // Because if here, then player alive and touching ground
+            if (playerMode == 0 || playerMode == 2)
+            {
+                x = Input.GetAxis("Horizontal");
+                z = Input.GetAxis("Vertical");
+
+                // if trying to pick up / drop off something
+                if (x_raw == 0 && y_raw == 0 && Input.GetKeyDown(KeyCode.E))
+                {
+
+                    // 0 - no box, can walk, can pickup
+                    if (playerMode == 0)
+                    {
+                        foreach (GameObject boxLocation in pickUpLocations)
+                        {
+                            if (Vector3.Distance(gameObject.transform.position, boxLocation.transform.position) < 1)
+                            {
+                                playerMode = 1;
+
+                            }
+                        }
+                    }
+                }
+            }
+
             movementVector.Set(x, 0, z);
 
             if (x != 0 || z != 0)
@@ -227,7 +316,7 @@ public class Controller : MonoBehaviour
                 movementVector.y = 0;
             }
 
-            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+            if ((x_raw != 0 || y_raw != 0) && (playerMode == 0 || playerMode == 2))
             {
                 playerAnimator.SetTrigger("Walking");
             }
