@@ -68,9 +68,14 @@ public class EnemyTransportWorker : MonoBehaviour
         pickupSound = GetComponent<AudioSource>();
     }
 
-    public void targetDestroyed()
+    public void destroyTarget()
     {
         smoke.SetActive(true);
+    }
+
+    public bool isTargetDestroyed()
+    {
+        return smoke.active;
     }
 
     void setDestination(Transform newDestination)

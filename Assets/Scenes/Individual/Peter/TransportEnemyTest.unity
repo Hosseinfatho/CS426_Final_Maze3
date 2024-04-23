@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667546, g: 0.48427135, b: 0.5645225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1241,6 +1241,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8086644729418645138, guid: fdc5116603d43ce409374ddbaeb4741a, type: 3}
+      propertyPath: pauseMenu
+      value: 
+      objectReference: {fileID: 601490873}
+    - target: {fileID: 8086644729418645138, guid: fdc5116603d43ce409374ddbaeb4741a, type: 3}
       propertyPath: testButton
       value: 
       objectReference: {fileID: 794551483}
@@ -2203,6 +2207,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547661271}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &601490873 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6843619047474961776, guid: fa8e3f21e0e07ba439a9ba59d47425af, type: 3}
+  m_PrefabInstance: {fileID: 454432960}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &630376845
 GameObject:
   m_ObjectHideFlags: 0

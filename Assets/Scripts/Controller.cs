@@ -10,6 +10,7 @@ public class Controller : MonoBehaviour
     [SerializeField] float mouseWheelSensitivity;
     [SerializeField] float cameraSnapBackSpeed;
     [SerializeField] GameObject[] transportEnemies;
+    [SerializeField] GameObject pauseMenu;
 
     // To be removed later:
     [SerializeField] TMP_Text debugTextField;
@@ -26,6 +27,7 @@ public class Controller : MonoBehaviour
     GameObject playerBox;
     GameObject playerModel;
     GameObject cameraContainer;
+    PauseMenu pauseMenuScript;
 
     GameObject eKey;
 
@@ -33,7 +35,8 @@ public class Controller : MonoBehaviour
     bool snapBackCamera = false; //if set to true, camera will center around the player, when done it will be set to false
 
     /*
-        -1 - player dead
+        -2 - player dead, screen was shown
+        -1 - player dead, but didn't show the end game screen
          0 - no box, can walk, can pickup
          1 - pickup animation playing, can't walk
          2 - has box, can walk, can pickup
@@ -41,7 +44,7 @@ public class Controller : MonoBehaviour
     */
     int playerMode = 0;
     int setTargetToDestroy = -1; // if >= 0, target with this ID will be set to be destroyed
-    float setTargetToDestroyTime = 0;
+    float setTargetToDestroyTime = 0; //also used to time the dead animation !
     float targetDestroyDelay = 3f;
     int targetsAmount = 0;
     int targetsDestroyed = 0;
@@ -118,6 +121,7 @@ public class Controller : MonoBehaviour
         resetAllAnimationTriggers();
         playerAnimator.SetTrigger("Die");
         controller.enabled = false;
+        setTargetToDestroyTime = Time.fixedTime;
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -149,6 +153,8 @@ public class Controller : MonoBehaviour
         eKey = transform.Find("RobotModel/Robot/e_key").gameObject;
         eKey.SetActive(false);
 
+        pauseMenuScript = pauseMenu.transform.Find("PauseMenuScript").gameObject.GetComponent<PauseMenu>();
+
         playerBox = transform.Find("RobotModel/Robot/Box").gameObject;
         playerModel = transform.Find("RobotModel").gameObject;
         cameraContainer = transform.Find("CameraContainer").gameObject;
@@ -170,7 +176,7 @@ public class Controller : MonoBehaviour
             boxesUsedAtThisLocation[i] = enemyContainer.transform.Find("EnemyTransportWorker/Robot/Box").gameObject;
         }
 
-        Debug.Log("Loading done");
+        Debug.Log("Start function completed.");
     }
 
     /*
@@ -270,17 +276,25 @@ public class Controller : MonoBehaviour
     {
         debugTextField.text = "";
 
+        // If game paused, don't do any checks
+        if (Time.timeScale == 0) return;
+
         // if specified some target to mark as destroyed, this will execute
         if (setTargetToDestroy >= 0 && Time.fixedTime - setTargetToDestroyTime > targetDestroyDelay)
         {
-            transportEnemies[setTargetToDestroy].transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>().targetDestroyed();
-            setTargetToDestroy = -1;
-            targetsDestroyed++;
+            EnemyTransportWorker enemyScript = transportEnemies[setTargetToDestroy].transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>();
+
+            if (!enemyScript.isTargetDestroyed())
+            {
+                enemyScript.destroyTarget();
+                setTargetToDestroy = -1;
+                targetsDestroyed++;
+            }
 
             // level finished
             if (targetsDestroyed >= targetsAmount)
             {
-
+                pauseMenuScript.showMessage("Level cleared !", 0.2f, 1f, 0.2f);
             }
         }
 
@@ -355,7 +369,20 @@ public class Controller : MonoBehaviour
 
 
         */
-        if (playerMode == -1) return;
+        if (playerMode < 0)
+        {
+            if (playerMode == -1)
+            {
+                if (checkAnimationState("Die") && Time.fixedTime - setTargetToDestroyTime > 3f)
+                {
+                    playerMode = -2;
+                    pauseMenuScript.showMessage("You failed.", 1f, 0.2f, 0.2f);
+                }
+            }
+
+            return; // !!!!!!!!!!!!!!!!!!!!!!!
+        }
+
 
 
 
