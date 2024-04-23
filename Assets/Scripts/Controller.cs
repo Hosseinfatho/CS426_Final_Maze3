@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -69,6 +70,32 @@ public class Controller : MonoBehaviour
         playerAnimator.SetTrigger(animation);
         _lastAnimation = animation;
     }
+    bool checkAnimationState(string stateName)
+    {
+        return playerAnimator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+    }
+    void resetAllAnimationTriggers()
+    {
+        foreach (var param in playerAnimator.parameters)
+        {
+            playerAnimator.ResetTrigger(param.name);
+        }
+    }
+
+    bool isBoxInProximity(GameObject[] locations)
+    {
+        foreach (GameObject boxLocation in locations)
+        {
+            if (Vector3.Distance(gameObject.transform.position, boxLocation.transform.position) < 1)
+            {
+                //set so player's own box look like one from this pickup location
+                playerBox.GetComponent<Renderer>().material.name = boxLocation.GetComponent<Renderer>().material.name;
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private void log(string msg)
     {
@@ -94,6 +121,7 @@ public class Controller : MonoBehaviour
         }
         return child;
     }
+
 
 
     private void Start()
@@ -266,6 +294,30 @@ public class Controller : MonoBehaviour
             }
         }
 
+        // Animations and unlocking the movement when they are done
+        // no box, playing the pick up animation, enable box at the start:
+        if (playerMode == 1)
+        {
+            if (checkAnimationState("BoxUp"))
+            {
+                playerBox.SetActive(true);
+            }
+            else if (checkAnimationState("Idle"))
+            {
+                playerMode = 2;
+                resetAllAnimationTriggers();
+            }
+        }
+        else if (playerMode == 3)
+        {
+            if (checkAnimationState("BoxDownDoneState"))
+            {
+                playerAnimator.SetTrigger("BoxDownDone");
+                playerBox.SetActive(false);
+                playerMode = 0;
+            }
+        }
+
         /*
             Allow for player input only when character is "touching" the ground.
             This also sets how far above the ground character is hovering.
@@ -291,17 +343,23 @@ public class Controller : MonoBehaviour
                 // if trying to pick up / drop off something
                 if (x_raw == 0 && y_raw == 0 && Input.GetKeyDown(KeyCode.E))
                 {
-
                     // 0 - no box, can walk, can pickup
                     if (playerMode == 0)
                     {
-                        foreach (GameObject boxLocation in pickUpLocations)
+                        if (isBoxInProximity(pickUpLocations))
                         {
-                            if (Vector3.Distance(gameObject.transform.position, boxLocation.transform.position) < 1)
-                            {
-                                playerMode = 1;
-
-                            }
+                            playerMode = 1;
+                            resetAllAnimationTriggers();
+                            playerAnimator.SetTrigger("BoxUp");
+                        }
+                    }
+                    else if (playerMode == 2)
+                    {
+                        if (isBoxInProximity(dropOffLocations))
+                        {
+                            playerMode = 3;
+                            resetAllAnimationTriggers();
+                            playerAnimator.SetTrigger("BoxDown");
                         }
                     }
                 }
