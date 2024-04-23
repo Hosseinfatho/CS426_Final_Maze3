@@ -251,13 +251,13 @@ public class EnemyTransportWorker : MonoBehaviour
 
         }
 
-        if (Vector3.Distance(player.transform.position, this.transform.position) < 1)
-        {
-            Debug.Log("Player should die now");
-            // enemyAnimator.ResetTrigger("Walking");
-            // enemyAnimator.SetTrigger("Die");
-            // pickupSound.Play();
-        }
+        // if (Vector3.Distance(player.transform.position, this.transform.position) < 1)
+        // {
+        //     Debug.Log("Player should die now");
+        //     // enemyAnimator.ResetTrigger("Walking");
+        //     // enemyAnimator.SetTrigger("Die");
+        //     // pickupSound.Play();
+        // }
 
 
     }

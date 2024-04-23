@@ -115,7 +115,9 @@ public class Controller : MonoBehaviour
     public void killPlayer()
     {
         playerMode = -1;
-
+        resetAllAnimationTriggers();
+        playerAnimator.SetTrigger("Die");
+        controller.enabled = false;
     }
 
     GameObject FindChildWithTag(GameObject parent, string tag)
@@ -256,6 +258,14 @@ public class Controller : MonoBehaviour
         return eulerAngles;
     }
 
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.tag == "Enemy")
+        {
+            killPlayer();
+        }
+    }
+
     void Update()
     {
         debugTextField.text = "";
@@ -317,6 +327,38 @@ public class Controller : MonoBehaviour
                 cameraContainer.transform.localRotation = Quaternion.Lerp(currentRotation, targetRotation, Time.deltaTime * cameraSnapBackSpeed);
             }
         }
+
+        /*
+            Mouse wheel for camera zooming in / out
+        */
+        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+        if (mouseWheel != 0)
+        {
+            Vector3 position = mainCamera.transform.localPosition;
+            position.z += mouseWheel * mouseWheelSensitivity;
+
+            if (position.z <= -30 && position.z >= -120)
+            {
+                mainCamera.transform.localPosition = position;
+            }
+        }
+
+
+        /*
+
+
+
+                    @!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@
+                    IF PLAYER IS DEAD ANYTHING AFTER THIS POINT DOESN'T EXECUTE
+                    @!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@!@
+
+
+
+        */
+        if (playerMode == -1) return;
+
+
+
 
         // Animations and unlocking the movement when they are done
         // no box, playing the pick up animation, enable box at the start:
@@ -467,23 +509,8 @@ public class Controller : MonoBehaviour
         }
 
 
-        /*
-            Mouse wheel for camera zooming in / out
-        */
-        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
-        if (mouseWheel != 0)
-        {
-            Vector3 position = mainCamera.transform.localPosition;
-            position.z += mouseWheel * mouseWheelSensitivity;
-
-            if (position.z <= -30 && position.z >= -120)
-            {
-                mainCamera.transform.localPosition = position;
-            }
-        }
 
         controller.Move(gameObject.transform.rotation * movementVector * Time.deltaTime * playerSpeed);
-
         /*
             Rotates the player character model
         */
@@ -494,5 +521,8 @@ public class Controller : MonoBehaviour
             playerModel.transform.localRotation = Quaternion.Lerp(playerModel.transform.localRotation, Quaternion.LookRotation(lookDirection.normalized), Mathf.Clamp01(lerpTime * (1 - smoothing)));
         }
         lerpTime += Time.deltaTime;
+
+
+
     }
 }
