@@ -1,6 +1,16 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+/*
+        To add this enemy to any scene:
+            1. Drop the prefab
+            2. To change the box color, replace the box that robot is carrying
+               (replace material of EnemyTransportWorker/Robot/Box)
+               All other box materials will be replaced by script.
+            3. Drop the enemy object into player script list.
+*/
+
+
 public class EnemyTransportWorker : MonoBehaviour
 {
 
