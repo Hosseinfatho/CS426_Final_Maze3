@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,12 +64,20 @@ public class Controller : MonoBehaviour
 
     private void resetPos()
     {
-
+        foreach (GameObject worker in transportEnemies)
+        {
+            EnemyTransportWorker script = worker.transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>();
+            script.setWantedLevel(0);
+        }
     }
 
     private void testButtonPressed()
     {
-
+        foreach (GameObject worker in transportEnemies)
+        {
+            EnemyTransportWorker script = worker.transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>();
+            script.setWantedLevel(script.getWantedLevel() + 1);
+        }
     }
 
     string _lastAnimation = "BoxUp";
@@ -289,6 +298,13 @@ public class Controller : MonoBehaviour
                 enemyScript.destroyTarget();
                 setTargetToDestroy = -1;
                 targetsDestroyed++;
+
+                // notify all workers about change in wanted level
+                foreach (GameObject worker in transportEnemies)
+                {
+                    EnemyTransportWorker script = worker.transform.Find("EnemyTransportWorker").GetComponent<EnemyTransportWorker>();
+                    script.setWantedLevel(script.getWantedLevel() + 1);
+                }
             }
 
             // level finished

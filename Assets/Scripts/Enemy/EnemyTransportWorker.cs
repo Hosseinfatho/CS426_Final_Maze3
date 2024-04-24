@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,6 +11,9 @@ public class EnemyTransportWorker : MonoBehaviour
     GameObject boxPickUpLocation;
     GameObject boxDropOffLocation;
     GameObject smoke;
+    Light robotLight;
+    float robotLightTime = 0;
+    GameObject rayCastSource;
 
     Animator enemyAnimator;
     NavMeshAgent agent;
@@ -52,6 +52,10 @@ public class EnemyTransportWorker : MonoBehaviour
         playerBox = transform.Find("Robot/Box").gameObject;
         smoke = transform.parent.gameObject.transform.Find("DropOffLocation/Smoke").gameObject;
         smoke.SetActive(false);
+        robotLight = transform.Find("Spot Light").gameObject.GetComponent<Light>();
+        robotLight.enabled = false;
+
+        rayCastSource = transform.Find("RayCastSource").gameObject;
 
         // Change all boxes inside the pickup location material to match the one set on robot
         Material wantedMaterial = playerBox.GetComponent<Renderer>().material;
@@ -96,7 +100,7 @@ public class EnemyTransportWorker : MonoBehaviour
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, viewDistance))
+        if (Physics.Raycast(rayCastSource.transform.position, player.transform.position - rayCastSource.transform.position, out hit, viewDistance))
         {
             if (hit.collider.tag == "Player")
             {
@@ -133,6 +137,8 @@ public class EnemyTransportWorker : MonoBehaviour
             agent.SetDestination(lastPlayerPosition);
             wasPlayerSeen = true;
             lastPlayerSeenTime = 0;
+            robotLight.color = Color.red;
+            robotLight.enabled = true;
             return true;
         }
 
@@ -235,8 +241,17 @@ public class EnemyTransportWorker : MonoBehaviour
             // so go to last location
             if (!checkIfShouldChasePlayer() && wasPlayerSeen)
             {
+                robotLight.color = new Color(1, 0.64f, 0); //orange
+
                 if (Vector3.Distance(transform.position, agent.pathEndPosition) < 0.5)
                 {
+                    // blink light if reached last player position and player not in sight
+                    if (Time.fixedTime - robotLightTime > 0.3)
+                    {
+                        robotLight.enabled = !robotLight.enabled;
+                        robotLightTime = Time.fixedTime;
+                    }
+
                     if (lastPlayerSeenTime == 0)
                     {
                         lastPlayerSeenTime = Time.fixedTime;
@@ -252,6 +267,7 @@ public class EnemyTransportWorker : MonoBehaviour
             else if (!wasPlayerSeen && Time.fixedTime - lastPlayerSeenTime > waitBeforeResumingAction)
             {
                 currentAction -= 10;
+                robotLight.enabled = false;
             }
 
         }
