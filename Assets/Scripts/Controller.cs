@@ -450,8 +450,14 @@ public class Controller : MonoBehaviour
                 z = Input.GetAxis("Vertical");
 
                 int boxLocationIndex = -1;
-                if (playerMode == 0) boxLocationIndex = isBoxInProximity(pickUpLocations);
-                else if (playerMode == 2) boxLocationIndex = isBoxInProximity(dropOffLocations);
+
+                if (targetsAmount > 0)
+                {
+                    if (playerMode == 0)
+                        boxLocationIndex = isBoxInProximity(pickUpLocations);
+                    else if (playerMode == 2)
+                        boxLocationIndex = isBoxInProximity(dropOffLocations);
+                }
 
                 // if near pickup or dropoff display e key on the player
                 eKey.SetActive(boxLocationIndex != -1);
